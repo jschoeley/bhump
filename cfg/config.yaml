@@ -1,0 +1,37 @@
+cod_lookup:
+  key: [
+    'pcml_complications',
+    'untreatable_neoplasms',
+    'treatable_neoplasms',
+    'maternal',
+    'infections_and_parasites',
+    'prematurity',
+    'accidents_and_violence',
+    'sids',
+    'unspecific',
+    'other'
+  ]
+  label: [
+      'PCML complications',
+      'Neoplasm (untreatable)',
+      'Neoplasm (treatable)',
+      'Maternal',
+      'Infections & parasites',
+      'Prematurity',
+      'Accidents & violence',
+      'SIDS',
+      'Unspecific',
+      'Other'
+    ]
+  color: [
+    '#A41D24', # pcml
+    '#F47C0C', # neoplasm (untreatable)
+    '#F8983C', # neoplasm (treatable)
+    '#F3AA9B', # maternal
+    '#06713B', # infection
+    '#63ABD2', # prematurity
+    '#2B1555', # accidents and violence
+    '#C0C2DA', # sids
+    '#5A5A5A', # unspecific
+    '#3A3A3E'  # other
+    ]

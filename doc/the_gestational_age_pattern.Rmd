@@ -5,15 +5,15 @@ author: |
   Jonas Schöley^[Interdisciplinary Centre on Population Dynamics, University of Southern Denmark. Correspondence: <jschoeley@health.sdu.dk>. During the writing of this article the author was a guest at the Max-Planck Institute for Demographic Research and funded by a grant from AXA Insurance.]
 output:
   bookdown::pdf_book:
-     template: ../thesis_style.tex
+     template: thesis_style.tex
      citation_package: natbib
      fig_caption: yes
-     keep_tex: false
+     keep_tex: true
      toc: false
      highlight: monochrome
 header-includes:
   \usepackage[section]{placeins}
-bibliography: [../refs.bib]
+bibliography: [refs.bib]
 ---
 
 ```{r setup, include=FALSE}

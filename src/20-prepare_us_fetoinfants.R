@@ -38,10 +38,10 @@ codebook$infant <- ReadCodebook(paths$input$codebook_infant)
 
 infant <- ReadFromZip(
   codebook$infant, paths$input$zip_infant, subset = c(
-    'Cohort1989','Cohort1990',
-    'Cohort1999','Cohort2000',
-    'Cohort2009','Cohort2010',
-    'Cohort2014','Cohort2015'
+    'Cohort1989','Cohort1990', 'Cohort1991',
+    'Cohort1999','Cohort2000', 'Cohort2001',
+    'Cohort2009','Cohort2010', 'Cohort2011',
+    'Cohort2014','Cohort2015'#, 'Cohort2016'
   ))
 fetus <- ReadFromZip(
   codebook$fetus, paths$input$zip_fetus, subset = c(

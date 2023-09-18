@@ -48,8 +48,13 @@ fetoinfant <-
   fetoinfant[
     gestation_at_delivery_w >= cnst$left_truncation_gestage &
       date_of_delivery_y %in%
-      c(1989, 1990, 1999, 2000, 2009, 2010, 2014, 2015),
+      c(1989, 1990,
+        1999, 2000,
+        2009, 2010,
+        2014, 2015),
     ]
+
+#fetoinfant[, .(count = .N), by = date_of_delivery_y]
 
 # Calculate date of conception ------------------------------------
 
@@ -82,18 +87,21 @@ fetoinfant[
 fetoinfant <-
   fetoinfant[
     date_of_conception_y %in% c(1989, 1999, 2009, 2014)
-    ]
+  ]
+#fetoinfant[, .(count = .N), by = date_of_conception_y]
+# dcast(
+#   fetoinfant[, .(count = .N),
+#              by = .(date_of_conception_y, date_of_delivery_y, type)],
+#   date_of_conception_y + date_of_delivery_y ~ type,
+#   value.var = "count"
+# )
 
 # delete space after icd code
-
-fetoinfant <-
-  fetoinfant[, 
-             cod_icd10 := gsub(" ", "", cod_icd10)]
+fetoinfant[, cod_icd10 := gsub(" ", "", cod_icd10)]
 
 # Recode cause of death categories --------------------------------
 
 cod_codes <- read_xlsx("./dat/10-cod-list/cod.xlsx")[-c(3,4,5,6)] 
-
 
 # cod_codes <- list(
 #   Maternal = c('P00', 'P01'),
@@ -116,38 +124,44 @@ cod_codes <- read_xlsx("./dat/10-cod-list/cod.xlsx")[-c(3,4,5,6)]
 #                 paste0('D', formatC(0:49, width = 2, flag = '0')))
 # )
 
+fetoinfant <- merge(fetoinfant, cod_codes, by = "cod_icd10", all.x = TRUE)
 
-fetoinfant <- merge(fetoinfant, cod_codes, by = "cod_icd10", all = T)
-fetoinfant <- fetoinfant[ !is.na(type)] 
-
-fetoinfant <- fetoinfant %>% 
-  mutate(cod_cat = case_when(
-    (date_of_delivery_y == 2014 & type == "fetus" & cod_icd10 == "") ~ "Other",
-    (date_of_delivery_y == 2015 & type == "fetus" & cod_icd10 == "") ~ "Other",
-    (cod_cat == "Maternal Complications" & age_at_death_d >= 100) ~ "Other",
-    (cod_cat == "Labour, Cord, Membrane and Labour Complications" & age_at_death_d >= 100) ~ "Other",
-    TRUE ~ cod_cat
-  ))
-
-
-
+# fetoinfant <- fetoinfant %>% 
+#   mutate(cod_cat = case_when(
+#     (date_of_delivery_y == 2014 & type == "fetus" & cod_icd10 == "") ~ "Other",
+#     (date_of_delivery_y == 2015 & type == "fetus" & cod_icd10 == "") ~ "Other",
+#     (cod_cat == "Maternal Complications" & age_at_death_d >= 100) ~ "Other",
+#     (cod_cat == "Labour, Cord, Membrane and Labour Complications" & age_at_death_d >= 100) ~ "Other",
+#     TRUE ~ cod_cat
+#   ))
 fetoinfant[
   ,
   cod_cat := fcase(
-    # substr(cod_icd10,1,3)%in%cod_codes$Maternal, 'Maternal',
-    # substr(cod_icd10,1,3)%in%cod_codes$PCML, 'PCML',
-    # substr(cod_icd10,1,3)%in%cod_codes$Prematurity, 'Prematurity',
-    # substr(cod_icd10,1,3)%in%cod_codes$InfectionsParacitesOperations, 'InfectionsParacitesOperations',
-    # substr(cod_icd10,1,3)%in%cod_codes$ViolenceAccidents, 'ViolenceAccidents',
-    # substr(cod_icd10,1,3)%in%cod_codes$UnspecificStillbirth, 'UnspecificStillbirth',
-    # substr(cod_icd10,1,3)%in%cod_codes$SuddenInfantDeath, 'SuddenInfantDeath',
-    # substr(cod_icd10,1,3)%in%cod_codes$TreatableNeoplasms, 'TreatableNeoplasms',
-    # substr(cod_icd10,1,3)%in%cod_codes$UntreatableNeoplasms, 'UntreatableNeoplasms',
+    (date_of_delivery_y == 2014 & type == "fetus" & cod_icd10 == ''), 'Other',
+    (date_of_delivery_y == 2015 & type == "fetus" & cod_icd10 == '') , 'Other',
+    (cod_cat == "Maternal Complications" & age_at_death_d >= 100), 'Other',
+    (cod_cat == "Labour, Cord, Membrane and Labour Complications" & age_at_death_d >= 100), 'Other',
     !is.na(cod_icd10), cod_cat,
     default = NA
   )
 ]
 
+# fetoinfant[
+#   ,
+#   cod_cat := fcase(
+#     # substr(cod_icd10,1,3)%in%cod_codes$Maternal, 'Maternal',
+#     # substr(cod_icd10,1,3)%in%cod_codes$PCML, 'PCML',
+#     # substr(cod_icd10,1,3)%in%cod_codes$Prematurity, 'Prematurity',
+#     # substr(cod_icd10,1,3)%in%cod_codes$InfectionsParacitesOperations, 'InfectionsParacitesOperations',
+#     # substr(cod_icd10,1,3)%in%cod_codes$ViolenceAccidents, 'ViolenceAccidents',
+#     # substr(cod_icd10,1,3)%in%cod_codes$UnspecificStillbirth, 'UnspecificStillbirth',
+#     # substr(cod_icd10,1,3)%in%cod_codes$SuddenInfantDeath, 'SuddenInfantDeath',
+#     # substr(cod_icd10,1,3)%in%cod_codes$TreatableNeoplasms, 'TreatableNeoplasms',
+#     # substr(cod_icd10,1,3)%in%cod_codes$UntreatableNeoplasms, 'UntreatableNeoplasms',
+#     !is.na(cod_icd10), cod_cat,
+#     default = NA
+#   )
+# ]
 
 # Add flags for vital events --------------------------------------
 
@@ -214,7 +228,6 @@ fetoinfant[
     age_at_death_w =
       (age_at_death_d + runif(.N))/7
   )]
-
 
 fetoinfant[
   ,

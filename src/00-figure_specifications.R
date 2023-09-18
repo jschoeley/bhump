@@ -13,7 +13,7 @@ fig_spec <- list()
 fig_spec$MyGGplotTheme <-
   function (
     size = 8,
-    family = 'serif',
+    family = 'sans',
     scaler = 1,
     no_axes = FALSE,
     panel_border = FALSE,
