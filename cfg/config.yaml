@@ -1,32 +1,40 @@
 cod_lookup:
   key: [
     'pcml_complications',
-    'untreatable_neoplasms',
-    'treatable_neoplasms',
-    'maternal',
-    'infections_and_parasites',
+    'congenital_malformations',
+    'maternal_complications',
+    'infections_parasites_toxins',
     'prematurity',
     'accidents_and_violence',
     'sids',
-    'unspecific',
+    'unspecific_stillbirth',
     'other'
   ]
   label: [
+      'Placenta, cord, membrane, labour complications',
+      'Congenital malformations, deformities and chromosomal anomalies',
+      'Maternal complications',
+      'Infections, parasites, and toxins',
+      'Prematurity',
+      'Accidents and violence',
+      'Sudden Infant Death',
+      'Unspecific stillbirth',
+      'Other'
+    ]
+  shortlabel: [
       'PCML complications',
-      'Neoplasm (untreatable)',
-      'Neoplasm (treatable)',
-      'Maternal',
-      'Infections & parasites',
+      'Congenital malformations',
+      'Maternal complications',
+      'Infections, parasites & toxins',
       'Prematurity',
       'Accidents & violence',
       'SIDS',
-      'Unspecific',
+      'Unspecific stillbirth',
       'Other'
     ]
   color: [
     '#A41D24', # pcml
-    '#F47C0C', # neoplasm (untreatable)
-    '#F8983C', # neoplasm (treatable)
+    '#F47C0C', # congenital malformations
     '#F3AA9B', # maternal
     '#06713B', # infection
     '#63ABD2', # prematurity

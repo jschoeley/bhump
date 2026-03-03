@@ -1,6 +1,6 @@
 ---
 codebook:
-  date: 2023-05-11
+  date: 2023-09-19
   author: Jonas Schöley
   contact: schoeley@demogr.mpg.de
 collection:
@@ -29,6 +29,15 @@ dictionary:
     '7': 'Non-Hispanic Black'
     '8': 'Non-Hispanic other races'
     '9': 'Origin unknown or not stated'
+  race_and_hispanic_orig_of_mother14: &race_and_hispanic_orig_of_mother14
+    '1': 'Non-Hispanic White (only)'
+    '2': 'Non-Hispanic Black (only)'
+    '3': 'Non-Hispanic AIAN (only)'
+    '4': 'Non-Hispanic Asian (only)'
+    '5': 'Non-Hispanic NHOPI (only)'
+    '6': 'Non-Hispanic more than one race'
+    '7': 'Hispanic'
+    '8': 'Origin unknown or not stated'
   tobacco_use89: &tobacco_use89
     '1': 'Yes'
     '2': 'No'
@@ -37,6 +46,16 @@ dictionary:
     'Y': 'Yes'
     'N': 'No'
     'U': 'Unknown or not stated'
+  education_of_mother: &education_of_mother
+    '1': '8th grade or less'
+    '2': '9th through 12th grade, no diploma'
+    '3': 'High school graduate / GED'
+    '4': 'Some college credit, no degree'
+    '5': 'Associate degree'
+    '6': 'Bachelors degree'
+    '7': 'Masters degree'
+    '8': 'Doctorate'
+    '9': 'Unknown'
 files:
   Period1989:
     description: 1989 US Fetal Deaths Public Use File
@@ -302,13 +321,13 @@ files:
     variables: &var_14
       race_and_hispanic_orig_of_mother:
         label: Race and Hispanic Origin of Mother
-        start: 146 # filler
-        end: 146
+        start: 144
+        end: 144
         type: factor
         format:
         scale: nominal
-        categories: *race_and_hispanic_orig_of_mother
-        missing_values:
+        categories: *race_and_hispanic_orig_of_mother14
+        missing_values: 8
       tobacco_use:
         label: Tobacco Use During Pregnancy
         start: 238
@@ -362,6 +381,15 @@ files:
         scale: nominal
         categories:
         missing_values:
+      education_of_mother:
+        label: Education of Mother
+        start: 145
+        end: 145
+        type: character
+        format:
+        scale: nominal
+        categories:
+        missing_values: 9
   Period2015:
     description: 2015 US Fetal Deaths Public Use File
     format: Fixed Width ASCII Text

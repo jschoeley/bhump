@@ -7,7 +7,7 @@ library(data.table)
 library(lubridate)
 library(magrittr)
 library(readxl)
-library(tidyverse)
+#library(tidyverse)
 
 # use all available CPUs
 setDTthreads(0)
@@ -68,13 +68,13 @@ fetoinfant[
   date_of_delivery_ym :=
     paste(date_of_delivery_y,
           date_of_delivery_m,
-          '15', sep = '-') %>%
+          '15', sep = '-') |>
     ymd()
   ]
 fetoinfant[
   ,
   date_of_conception_ym :=
-    (date_of_delivery_ym - weeks(gestation_at_delivery_w - 2)) %>%
+    (date_of_delivery_ym - weeks(gestation_at_delivery_w - 2)) |>
     round_date(unit = 'month')
   ]
 fetoinfant[
@@ -88,80 +88,66 @@ fetoinfant <-
   fetoinfant[
     date_of_conception_y %in% c(1989, 1999, 2009, 2014)
   ]
-#fetoinfant[, .(count = .N), by = date_of_conception_y]
-# dcast(
-#   fetoinfant[, .(count = .N),
-#              by = .(date_of_conception_y, date_of_delivery_y, type)],
-#   date_of_conception_y + date_of_delivery_y ~ type,
-#   value.var = "count"
-# )
 
 # delete space after icd code
 fetoinfant[, cod_icd10 := gsub(" ", "", cod_icd10)]
 
+#fetoinfant[, .(count = .N), by = date_of_conception_y]
+dcast(
+  fetoinfant[, .(count = .N),
+             by = .(date_of_conception_y, date_of_delivery_y, type)],
+  date_of_conception_y + date_of_delivery_y ~ type,
+  value.var = "count"
+)
+
 # Recode cause of death categories --------------------------------
 
-cod_codes <- read_xlsx("./dat/10-cod-list/cod.xlsx")[-c(3,4,5,6)] 
-
-# cod_codes <- list(
-#   Maternal = c('P00', 'P01'),
-#   PCML = c('P02', 'P03', 'P04', 'P10', 'P11',
-#            'P12', 'P13', 'P14', 'P15'),
-#   Prematurity = c('P05', 'P07', 'P08'),
-#   Respiratory = c('P20', 'P21', 'P22', 'P23', 'P24', 'P25',
-#                   'P26', 'P27', 'P28'),
-#   External = c('P35','P36','P37','P38','P39',
-#                paste0('A', formatC(0:99, width = 2, flag = '0')),
-#                paste0('B', formatC(0:99, width = 2, flag = '0')),
-#                paste0('V', formatC(0:99, width = 2, flag = '0')),
-#                paste0('W', formatC(0:99, width = 2, flag = '0')),
-#                paste0('X', formatC(c(0:59, 85:99), width = 2, flag = '0')),
-#                paste0('Y', formatC(c(0:9, 10:36, 40:84), width = 2, flag = '0'))
-#   ),
-#   Unspecific = c('P95', paste0('R', formatC(0:99, width = 2, flag = '0'))),
-#   Neoplasms = c(paste0('Q', formatC(0:99, width = 2, flag = '0')),
-#                 paste0('C', formatC(0:99, width = 2, flag = '0')),
-#                 paste0('D', formatC(0:49, width = 2, flag = '0')))
-# )
-
-fetoinfant <- merge(fetoinfant, cod_codes, by = "cod_icd10", all.x = TRUE)
-
-# fetoinfant <- fetoinfant %>% 
-#   mutate(cod_cat = case_when(
-#     (date_of_delivery_y == 2014 & type == "fetus" & cod_icd10 == "") ~ "Other",
-#     (date_of_delivery_y == 2015 & type == "fetus" & cod_icd10 == "") ~ "Other",
-#     (cod_cat == "Maternal Complications" & age_at_death_d >= 100) ~ "Other",
-#     (cod_cat == "Labour, Cord, Membrane and Labour Complications" & age_at_death_d >= 100) ~ "Other",
-#     TRUE ~ cod_cat
-#   ))
-fetoinfant[
-  ,
-  cod_cat := fcase(
-    (date_of_delivery_y == 2014 & type == "fetus" & cod_icd10 == ''), 'Other',
-    (date_of_delivery_y == 2015 & type == "fetus" & cod_icd10 == '') , 'Other',
-    (cod_cat == "Maternal Complications" & age_at_death_d >= 100), 'Other',
-    (cod_cat == "Labour, Cord, Membrane and Labour Complications" & age_at_death_d >= 100), 'Other',
-    !is.na(cod_icd10), cod_cat,
-    default = NA
-  )
-]
-
+# cod_codes <- read_xlsx("./dat/10-cod-list/cod.xlsx")[-c(3,4,5)]
+# 
+# fetoinfant <- merge(fetoinfant, cod_codes, by = "cod_icd10", all.x = TRUE)
+# 
 # fetoinfant[
 #   ,
 #   cod_cat := fcase(
-#     # substr(cod_icd10,1,3)%in%cod_codes$Maternal, 'Maternal',
-#     # substr(cod_icd10,1,3)%in%cod_codes$PCML, 'PCML',
-#     # substr(cod_icd10,1,3)%in%cod_codes$Prematurity, 'Prematurity',
-#     # substr(cod_icd10,1,3)%in%cod_codes$InfectionsParacitesOperations, 'InfectionsParacitesOperations',
-#     # substr(cod_icd10,1,3)%in%cod_codes$ViolenceAccidents, 'ViolenceAccidents',
-#     # substr(cod_icd10,1,3)%in%cod_codes$UnspecificStillbirth, 'UnspecificStillbirth',
-#     # substr(cod_icd10,1,3)%in%cod_codes$SuddenInfantDeath, 'SuddenInfantDeath',
-#     # substr(cod_icd10,1,3)%in%cod_codes$TreatableNeoplasms, 'TreatableNeoplasms',
-#     # substr(cod_icd10,1,3)%in%cod_codes$UntreatableNeoplasms, 'UntreatableNeoplasms',
+#     (date_of_delivery_y == 2014 & type == "fetus" & cod_icd10 == ''), 'other',
+#     (date_of_delivery_y == 2015 & type == "fetus" & cod_icd10 == '') , 'other',
+#     (cod_cat == "maternal_complications" & age_at_death_d >= 100), 'other',
+#     (cod_cat == "pcml_complications" & age_at_death_d >= 100), 'other',
 #     !is.na(cod_icd10), cod_cat,
 #     default = NA
 #   )
 # ]
+
+# Recode cause of death categories 2 ------------------------------
+
+# load mapping between cod categories and icd-10 codes
+cod_codes <- read_xlsx("./dat/10-cod-list/cod.xlsx")
+cod_codes <- as.data.table(cod_codes)
+cod_codes <- cod_codes[,.(cod_icd10, cod_cat = cod_cat_2)]
+
+# add cod categories to data
+fetoinfant <-
+  merge(fetoinfant, cod_codes, by = "cod_icd10", all.x = TRUE)
+
+# define special mappings
+fetoinfant[
+  ,
+  cod_cat := fcase(
+    # code 'other' category
+    (type == "fetus" & (cod_icd10 == '' | is.na(cod_icd10))),
+    'other',
+    #(cod_cat == "maternal_complications" & age_at_death_d >= 100), 'other',
+    #(cod_cat == "pcml_complications" & age_at_death_d >= 100), 'other',
+    # prematurity only if gestation at birth was early
+    (startsWith(cod_icd10, c('P22', 'P26', 'P27', 'P28')) &
+       gestation_at_delivery_w >= 37),
+    'other',
+    # defaults
+    !is.na(cod_icd10),
+    cod_cat,
+    default = NA
+  )
+]
 
 # Add flags for vital events --------------------------------------
 
@@ -267,6 +253,7 @@ fetoinfant <-
           .(
             id, sex,
             race_and_hispanic_orig_of_mother,
+            education_of_mother,
             date_of_conception_y, date_of_conception_ym,
             fetal_death, life_birth,
             neonatal_death, neonatal_survivor,
@@ -287,6 +274,7 @@ strata <-
   c(
     'id', 'sex',
     'race_and_hispanic_orig_of_mother',
+    'education_of_mother',
     'date_of_conception_y'
   )
 
@@ -512,6 +500,11 @@ fetoinfant_event_histories[
   ][,
     all(same)
   ]
+
+# are all the observed cods also in the cod table?
+all(unique(fetoinfant$cod_icd10) %in% cod_codes$cod_icd10)
+
+# Export ----------------------------------------------------------
 
 # save the processed microdata
 save(

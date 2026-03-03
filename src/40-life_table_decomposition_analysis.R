@@ -15,6 +15,15 @@ fig <- list()
 # tables
 tab <- list()
 
+paths <- list()
+paths$input <- list(
+  fetoinfant_lifetables = 'out/30-fetoinfant_lifetables.RData'
+)
+paths$output <- list(
+  fig = 'out',
+  tables = 'out/40-tables.rds'
+)
+
 # constants
 cnst <- list(
   ar = 0.3,
@@ -27,16 +36,16 @@ cnst <- list(
 # Data ------------------------------------------------------------
 
 # feto-infant lifetables
-load('out/30-fetoinfant_lifetables.RData')
+load(paths$input$fetoinfant_lifetables)
 
 # Plot fetoinfant mortality trajectory ----------------------------
 
 tab$total_filt <-
-  filt$total09 %>%
+  filt$total14 %>%
   FILTMortalityRates()
 
 tab$birth_distribution <-
-  filt$total09 %>%
+  filt$total14 %>%
   FILTAgeDistributionOfBirths()
   
 fig$gestational_age_pattern <-
@@ -76,19 +85,11 @@ fig$gestational_age_pattern <-
   coord_cartesian(expand = FALSE)
 fig$gestational_age_pattern
 
-fig_spec$ExportPDF(
-  fig$gestational_age_pattern,
-  '40-gestational_age_pattern',
-  'out',
-  width = fig_spec$width,
-  height = fig_spec$width*0.7
-)
-
 # Plot perinatal population dynamics ------------------------------
 
 # feto-infant life-table during the perinatal period
 tab$perinatal_filt <-
-  filt$total09 %>%
+  filt$total14 %>%
   filter(x >= 24, x <= 50)
   
 # relative exposures by weeks of gestation and
@@ -161,11 +162,11 @@ fig$fetoinfant_mortality <-
     limits = cnst$x_limits
   ) +
   scale_y_continuous(
-    paste0('Feto-infant deaths per ',
+    paste0('Feto-infant deaths per\n',
            formatC(cnst$scaler, format = 'd', big.mark = ','),
-           '\n person-weeks at risk')
+           ' weeks at risk')
   ) +
-  fig_spec$MyGGplotTheme(ar = cnst$ar) +
+  fig_spec$MyGGplotTheme() +
   guides(fill = 'none') +
   coord_cartesian(expand = FALSE, clip = 'off')
 fig$fetoinfant_mortality
@@ -201,14 +202,15 @@ fig$separate_rates <-
     limits = cnst$x_limits
   ) +
   scale_y_continuous(
-    paste0('Deaths per ',
+    paste0('Deaths per\n',
            formatC(cnst$scaler, format = 'd', big.mark = ','),
-           '\n person-weeks at risk'),
-    trans = 'log10'
+           ' weeks at risk'),
+    trans = 'log10',
+    labels = scales::label_comma()
   ) +
   scale_color_manual(values = fig_spec$discrete_colors) +
   scale_fill_manual(values = fig_spec$discrete_colors_light) +
-  fig_spec$MyGGplotTheme(ar = 0.9) +
+  fig_spec$MyGGplotTheme() +
   guides(color = 'none', fill = 'none') +
   coord_cartesian(expand = FALSE, clip = 'off')
 fig$separate_rates
@@ -244,7 +246,7 @@ fig$feto_neonate_ratio <-
     'Neonatal-fetal\nmortality ratio',
     labels = scales::label_comma(accuracy = 0.1)
   ) +
-  fig_spec$MyGGplotTheme(ar = cnst$ar) +
+  fig_spec$MyGGplotTheme() +
   coord_cartesian(expand = FALSE, clip = 'off')
 fig$feto_neonate_ratio
 
@@ -254,14 +256,6 @@ fig$perinatal_popdynamics <-
   nrow = 3, align = 'hv', labels = 'AUTO', axis = 'l'
 )
 fig$perinatal_popdynamics
-
-fig_spec$ExportPDF(
-  fig$perinatal_popdynamics,
-  filename = '40-perinatal_popdynamics',
-  path = 'out',
-  width = fig_spec$width,
-  height = fig_spec$width*1.1
-)
 
 # Decompose feto-infant mortality ---------------------------------
 
@@ -355,7 +349,31 @@ DecomposeFetoInfantMortalityDynamics <-
     
   }
 
-DecomposeFetoInfantMortalityDynamics(filt$total09, 25, 33, scaler = 1e5)
-DecomposeFetoInfantMortalityDynamics(filt$total09, 33, 39, scaler = 1e5)
-DecomposeFetoInfantMortalityDynamics(filt$total09, 39, 45, scaler = 1e5)
-DecomposeFetoInfantMortalityDynamics(filt$total09, 45, 72, scaler = 1e5)
+tab$kitagawa_25_33 <-
+  DecomposeFetoInfantMortalityDynamics(filt$total14, 25, 33, scaler = 1e5)
+tab$kitagawa_33_39 <-
+  DecomposeFetoInfantMortalityDynamics(filt$total14, 33, 39, scaler = 1e5)
+tab$kitagawa_39_45 <-
+  DecomposeFetoInfantMortalityDynamics(filt$total14, 39, 45, scaler = 1e5)
+tab$kitagawa_45_72 <-
+  DecomposeFetoInfantMortalityDynamics(filt$total14, 45, 72, scaler = 1e5)
+
+# Export ----------------------------------------------------------
+
+fig_spec$ExportPDF(
+  fig$gestational_age_pattern,
+  '40-gestational_age_pattern',
+  paths$output$fig,
+  width = fig_spec$width,
+  height = fig_spec$width*0.7
+)
+
+fig_spec$ExportPDF(
+  fig$perinatal_popdynamics,
+  filename = '40-perinatal_popdynamics',
+  path = paths$output$fig,
+  width = fig_spec$width,
+  height = fig_spec$width*1.1
+)
+
+saveRDS(tab, paths$output$tables)

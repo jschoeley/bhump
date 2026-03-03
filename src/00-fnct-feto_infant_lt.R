@@ -300,6 +300,12 @@ FILT <-
           filter(fetoinfant_event_table,
                  orig == {{postneonate_state_name}})
         
+        NullToZeroCount <- function (x) {
+          result <- 0
+          if (length(x)>0) { result <- x }
+          return(result)
+        }
+        
         fetoinfant_life_table <-
           tibble(
             # start of age interval
@@ -309,27 +315,27 @@ FILT <-
             # transition counts and exposure times
             # foetus
             N_F =
-              from_fetus[['P']],
+              NullToZeroCount(from_fetus[['P']]),
             E_F =
-              from_fetus[['O']],
+              NullToZeroCount(from_fetus[['O']]),
             D_F =
-              from_fetus[[paste0('to_', {{death_state_name}})]],
+              NullToZeroCount(from_fetus[[paste0('to_', {{death_state_name}})]]),
             # neonates
             B =
-              from_fetus[[paste0('to_', {{neonate_state_name}})]],
+              NullToZeroCount(from_fetus[[paste0('to_', {{neonate_state_name}})]]),
             N_N =
-              from_neonate[['P']],
+              NullToZeroCount(from_neonate[['P']]),
             E_N =
-              from_neonate[['O']],
+              NullToZeroCount(from_neonate[['O']]),
             D_N =
-              from_neonate[[paste0('to_', {{death_state_name}})]],
+              NullToZeroCount(from_neonate[[paste0('to_', {{death_state_name}})]]),
             # postneonates
             N_P =
-              from_postneonate[['P']],
+              NullToZeroCount(from_postneonate[['P']]),
             E_P =
-              from_postneonate[['O']],
+              NullToZeroCount(from_postneonate[['O']]),
             D_P =
-              from_postneonate[[paste0('to_', {{death_state_name}})]],
+              NullToZeroCount(from_postneonate[[paste0('to_', {{death_state_name}})]]),
             # infants
             N_I =
               N_N + N_P,
@@ -339,7 +345,7 @@ FILT <-
               D_N + D_P,
             # survivors
             C =
-              from_postneonate[[paste0('to_', {{censored_state_name}})]],
+              NullToZeroCount(from_postneonate[[paste0('to_', {{censored_state_name}})]]),
             # total
             N =
               N_F + N_I,

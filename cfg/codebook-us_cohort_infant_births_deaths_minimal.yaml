@@ -1,6 +1,6 @@
 ---
 codebook:
-  date: 2023-05-11
+  date: 2023-09-19
   author: Jonas Schöley
   contact: schoeley@demogr.mpg.de
 collection:
@@ -27,6 +27,25 @@ dictionary:
     '7': 'Non-Hispanic Black'
     '8': 'Non-Hispanic other races'
     '9': 'Origin unknown or not stated'
+  race_and_hispanic_orig_of_mother14: &race_and_hispanic_orig_of_mother14
+    '1': 'Non-Hispanic White (only)'
+    '2': 'Non-Hispanic Black (only)'
+    '3': 'Non-Hispanic AIAN (only)'
+    '4': 'Non-Hispanic Asian (only)'
+    '5': 'Non-Hispanic NHOPI (only)'
+    '6': 'Non-Hispanic more than one race'
+    '7': 'Hispanic'
+    '8': 'Origin unknown or not stated'
+  education_of_mother: &education_of_mother
+    '1': '8th grade or less'
+    '2': '9th through 12th grade, no diploma'
+    '3': 'High school graduate / GED'
+    '4': 'Some college credit, no degree'
+    '5': 'Associate degree'
+    '6': 'Bachelors degree'
+    '7': 'Masters degree'
+    '8': 'Doctorate'
+    '9': 'Unknown'
 files:
   Cohort1989:
     description: 1989 US Territory Cohort Linked Infant Deaths and Births (Denominator File)
@@ -420,13 +439,13 @@ files:
     variables: &var_14
       race_and_hispanic_orig_of_mother:
         label: Race and Hispanic Origin of Mother
-        start: 22 # blank line
-        end: 22
+        start: 117
+        end: 117
         type: factor
         format:
         scale: nominal
-        categories: *race_and_hispanic_orig_of_mother
-        missing_values:
+        categories: *race_and_hispanic_orig_of_mother14
+        missing_values: 8
       date_of_delivery_y:
         label: Year of Delivery
         start: 9
@@ -481,6 +500,15 @@ files:
         scale:
         categories:
         missing_values:
+      education_of_mother:
+        label: Education of Mother
+        start: 124
+        end: 124
+        type: character
+        format:
+        scale: nominal
+        categories:
+        missing_values: 9
   Cohort2015:
     description: 2015 US Territory Cohort Linked Infant Deaths (Denominator File)
     format: Fixed Width ASCII Text

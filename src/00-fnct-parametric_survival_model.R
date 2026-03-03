@@ -17,43 +17,52 @@ ScaleInverseLogit <- function(logit_x, a, b) {
   return(x)
 }
 
+# Takes a vector of parameters on optimization scale
+# – as returned by InitializeParameters – and transforms
+# it to a vector of parameters on prediction scale as used in
+# the FetoinfantSurv/Hzrd functions
 RescaleParameters <- function (
     pars, model, split,
-    c_range = c(10, 20), b_range = c(-0.7, 0.7), beta_range = c(-0.7, 0.7)
+    zeta_range = c(10, 20),
+    beta1_range = c(-0.7, 0.7),
+    beta2_range = c(-0.7, 0.7)
 ) {
   rescaled_parameters <- switch(
     model,
     basic = function () {
       p <- list()
-      p$a1 = exp(pars[1])
-      p$b = exp(pars[2])
-      p$a2 = exp(pars[3])
-      p$c = ScaleInverseLogit(pars[4], c_range[1], c_range[2])
-      p$s = exp(pars[5])
-      p$alpha = exp(pars[1]-p$c*p$b)
-      p$beta = p$b
+      p$alpha1 = exp(pars[1])
+      p$beta1 = exp(pars[2])
+      p$gamma = exp(pars[3])
+      p$zeta = ScaleInverseLogit(pars[4], zeta_range[1], zeta_range[2])
+      p$sigma = exp(pars[5])
+      p$alpha2 = exp(pars[1]-p$zeta*p$beta1)
+      p$beta2 = p$beta1
+      p$tau = exp(pars[6])
       return(p)
     },
     flexible1 = function () {
       p <- list()
-      p$a1 = exp(pars[1])
-      p$b = exp(pars[2])
-      p$a2 = exp(pars[5])
-      p$c = ScaleInverseLogit(pars[6], c_range[1], c_range[2])
-      p$s = exp(pars[7])
-      p$alpha = exp(pars[3])
-      p$beta = exp(pars[4])
+      p$alpha1 = exp(pars[1])
+      p$beta1 = exp(pars[2])
+      p$gamma = exp(pars[5])
+      p$zeta = ScaleInverseLogit(pars[6], zeta_range[1], zeta_range[2])
+      p$sigma = exp(pars[7])
+      p$alpha2 = exp(pars[3])
+      p$beta2 = exp(pars[4])
+      p$tau = exp(pars[8])
       return(p)
     },
     flexible2 = function () {
       p <- list()
-      p$a1 = exp(pars[1])
-      p$b = ScaleInverseLogit(pars[2], b_range[1], b_range[2])
-      p$a2 = exp(pars[5])
-      p$c = ScaleInverseLogit(pars[6], c_range[1], c_range[2])
-      p$s = exp(pars[7])
-      p$alpha = exp(pars[3])
-      p$beta = ScaleInverseLogit(pars[4], beta_range[1], beta_range[2])
+      p$alpha1 = exp(pars[1])
+      p$beta1 = ScaleInverseLogit(pars[2], beta1_range[1], beta1_range[2])
+      p$gamma = exp(pars[5])
+      p$zeta = ScaleInverseLogit(pars[6], zeta_range[1], zeta_range[2])
+      p$sigma = exp(pars[7])
+      p$alpha2 = exp(pars[3])
+      p$beta2 = ScaleInverseLogit(pars[4], beta2_range[1], beta2_range[2])
+      p$tau = exp(pars[8])
       return(p)
     }
   )
@@ -68,64 +77,70 @@ InitializeParameters <- function (m, model = 'basic', split = 14) {
     basic = function () {
       p <- list()
       # log hazard at t=0
-      p$a1 = log(ifelse(m[1] == 0, mean(m), m[1]))
+      p$alpha1 = log(ifelse(m[1] == 0, mean(m), m[1]))
       # log relative rate of ontogenescent mortality decline
       #p$b = log(abs(mean(diff(log(m)))))
-      p$b = (
+      p$beta1 = (
         abs(
           log(mean(tail(m, 5), na.rm = TRUE)) -
             log(mean(head(m, 5), na.rm = TRUE))
         )
       ) / (length(m)-2.5 - 2.5)
-      p$b = log(p$b)
-      if (is.infinite(p$b) | is.na(p$b)) { p$b = log(0.1) }
-      # log hazard at split point
-      p$alpha = p$a1-exp(p$b)*split
+      p$beta1 = log(p$beta1)
+      if (is.infinite(p$beta1) | is.na(p$beta1)) { p$beta1 = log(0.1) }
+      # log hazard at split point (zeta)
+      p$alpha2 = p$alpha1-exp(p$beta1)*split
       # log relative rate of decline after split
-      p$beta = p$b
+      p$beta2 = p$beta1
       # log hazard contribution of birth hump at peak
-      p$a2 = p$a1 - log(2)
+      p$gamma = p$alpha1 - log(2)
       # location of birth component (0 gets rescaled to 39 weeks)
-      p$c = 0
+      p$zeta = log(0.07)
       # log spread of birth component
-      p$s = log(1)
+      p$sigma = log(1.6)
+      # birth hump log left-skewness
+      p$tau = log(2.7)
       return(p)
     },
     flexible1 = function () {
       p <- list()
       # log hazard at t=0
-      p$a1 = log(ifelse(m[1] == 0, mean(m), m[1]))
+      p$alpha1 = log(ifelse(m[1] == 0, mean(m), m[1]))
       # log relative rate of ontogenescent mortality decline
-      p$b = log(abs(mean(diff(log(m)))))
-      if (is.infinite(p$b) | is.na(p$b)) { p$b = log(0.1) }
+      p$beta1 = log(abs(mean(diff(log(m)))))
+      if (is.infinite(p$beta1) | is.na(p$beta1)) { p$beta1 = log(0.1) }
       # log hazard at split point
-      p$alpha = p$a1-exp(p$b)*split
+      p$alpha2 = p$alpha1-exp(p$beta1)*split
       # log relative rate of decline after split
-      p$beta = p$b
+      p$beta2 = p$beta1
       # log hazard contribution of birth hump at peak
-      p$a2 = p$a1 - log(2)
+      p$gamma = p$alpha1 - log(2)
       # location of birth component (0 gets rescaled to 39 weeks)
-      p$c = 0
+      p$zeta = log(0.07)
       # log spread of birth component
-      p$s = log(1)
+      p$sigma = log(1.6)
+      # birth hump log left-skewness
+      p$tau = log(2.7)
       return(p)
     },
     flexible2 = function () {
       p <- list()
       # log hazard at t=0
-      p$a1 = log(mean(m))
+      p$alpha1 = log(mean(m))
       # ScaledLogit relative rate of ontogenescent mortality decline
-      p$b = mean(m)
+      p$beta1 = mean(m)
       # log hazard at split point
-      p$alpha = p$a1-p$b*split
+      p$alpha2 = p$alpha1-p$beta1*split
       # ScaledLogit relative rate of decline after split
-      p$beta = 1e-9
+      p$beta2 = 1e-9
       # log hazard contribution of birth hump at peak
-      p$a2 = p$a1 - log(2)
+      p$gamma = p$alpha1 - log(2)
       # location of birth component (0 gets rescaled to 39 weeks)
-      p$c = 0
+      p$zeta = log(0.07)
       # log spread of birth component
-      p$s = log(1)
+      p$sigma = log(1.6)
+      # birth hump log left-skewness
+      p$tau = log(2.7)
       return(p)
     }
   )
@@ -135,19 +150,32 @@ InitializeParameters <- function (m, model = 'basic', split = 14) {
   init_pars_ordered <- switch(
     model,
     basic = c(
-      '1:a1' = init_pars_pre[['a1']], '2:b' = init_pars_pre[['b']],
-      '3:a2' = init_pars_pre[['a2']], '4:c' = init_pars_pre[['c']],
-      '5:s' = init_pars_pre[['s']]
+      '1:alpha1' = init_pars_pre[['alpha1']],
+      '2:beta1' = init_pars_pre[['beta1']],
+      '3:gamma' = init_pars_pre[['gamma']],
+      '4:zeta' = init_pars_pre[['zeta']],
+      '5:sigma' = init_pars_pre[['sigma']],
+      '6:tau' = init_pars_pre[['tau']]
     ),
     flexible1 = c(
-      '1:a1' = init_pars_pre[['a1']], '2:b' = init_pars_pre[['b']],
-      '3:alpha' = init_pars_pre[['alpha']], '4:beta' = init_pars_pre[['beta']],
-      '5:a2' = init_pars_pre[['a2']], '6:c' = init_pars_pre[['c']], '7:s' = init_pars_pre[['s']]
+      '1:alpha1' = init_pars_pre[['alpha1']],
+      '2:beta1' = init_pars_pre[['beta1']],
+      '3:alpha2' = init_pars_pre[['alpha2']],
+      '4:beta2' = init_pars_pre[['beta2']],
+      '5:gamma' = init_pars_pre[['gamma']],
+      '6:zeta' = init_pars_pre[['zeta']],
+      '7:sigma' = init_pars_pre[['sigma']],
+      '8:tau' = init_pars_pre[['tau']]
     ),
     flexible2 = c(
-      '1:a1' = init_pars_pre[['a1']], '2:b' = init_pars_pre[['b']],
-      '3:alpha' = init_pars_pre[['alpha']], '4:beta' = init_pars_pre[['beta']],
-      '5:a2' = init_pars_pre[['a2']], '6:c' = init_pars_pre[['c']], '7:s' = init_pars_pre[['s']]
+      '1:alpha1' = init_pars_pre[['alpha1']],
+      '2:beta1' = init_pars_pre[['beta1']],
+      '3:alpha2' = init_pars_pre[['alpha2']],
+      '4:beta2' = init_pars_pre[['beta2']],
+      '5:gamma' = init_pars_pre[['gamma']],
+      '6:zeta' = init_pars_pre[['zeta']],
+      '7:sigma' = init_pars_pre[['sigma']],
+      '8:tau' = init_pars_pre[['tau']]
     )
   )
   
@@ -159,57 +187,72 @@ InitializeParameters <- function (m, model = 'basic', split = 14) {
 
 # baseline characteristics
 NegGompertzHzrd <-
-  function (x, a, b, alpha, beta, split) {
-    I1 = ifelse(x < split, 1, 0)
-    I2 = ifelse(x >= split, 1, 0)
-    a*exp(-b*x)*I1 + alpha*exp(-beta*(x-split))*I2
+  function (x, alpha1, beta1, alpha2, beta2, zeta) {
+    I1 = ifelse(x < zeta, 1, 0)
+    I2 = 1-I1
+    alpha1*exp(-beta1*x)*I1 + alpha2*exp(-beta2*(x-zeta))*I2
   }
 NegGompertzCumHzrd <-
-  function (x, a, b, alpha, beta, split) {
-    I1 = ifelse(x < split, 1, 0)
-    I2 = ifelse(x >= split, 1, 0)
-    Ssplit = ((a - a*exp(-b*split)) / b)
-    I1*((a - a*exp(-b*x)) / b) +
-      I2*((alpha - alpha*exp(-beta*(x-split))) / beta + Ssplit)
+  function (x, alpha1, beta1, alpha2, beta2, zeta) {
+    I1 = ifelse(x < zeta, 1, 0)
+    I2 = 1-I1
+    
+    H_zeta = ((alpha1 - alpha1*exp(-beta1*zeta)) / beta1)
+    I1*((alpha1 - alpha1*exp(-beta1*x)) / beta1) +
+      I2*((alpha2 - alpha2*exp(-beta2*(x-zeta))) / beta2 + H_zeta)
   }
 NegGompertzSurv <-
-  function (x, a, b, alpha, beta, split) {
-    exp(-NegGompertzCumHzrd(x, a, b, alpha, beta, split))
+  function (x, alpha1, beta1, alpha2, beta2, zeta) {
+    exp(-NegGompertzCumHzrd(x, alpha1, beta1, alpha2, beta2, zeta))
   }
 
 # birth hump characteristics
 GaussianHzrd <-
-  function (x, a, c, s) {
-    a*exp(-(x-c)^2/(2*s^2))
+  function(x, gamma, sigma, tau, zeta){
+    I1 = ifelse(x < zeta, 1, 0)
+    I2 = 1-I1
+    gamma * exp( (-(x-zeta)^2) / (sigma + I1*tau) )
   }
-GaussianCumHzrd <-
-  function (x, a, c, s) {
-    denom <- sqrt(2)*s
-    Hx <- a*sqrt(pi/2)*s*(pracma::erf(c/denom) + pracma::erf((x-c)/denom))
-    return(Hx)
+GaussianCumHzrd <- #how to change this?
+  function (x, gamma, sigma, tau, zeta) {
+    I1 = ifelse(x < zeta, 1, 0)
+    I2 = 1-I1
+    
+    A <- gamma*sqrt(pi)
+    B <- sqrt(sigma)
+    C <- sqrt(sigma+tau)
+    AC <- A*C
+    
+    Erf1 <- pracma::erf(zeta/C)
+    Erf2 <- pracma::erf((zeta-x)/B)
+    Erf3 <- pracma::erf((zeta-x)/C)
+    
+    I1*(AC*(Erf1 - Erf3))/2 +  
+      I2*(AC*Erf1 - A*B*Erf2)/2
   }
 GaussianSurv <-
-  function (x, a, c, s) {
-    exp(-GaussianCumHzrd(x, a, c, s))
+  function (x, gamma, sigma, tau, zeta) {
+    exp(-GaussianCumHzrd(x, gamma, sigma, tau, zeta))
   }
 
 # feto-infant competing risks survival
 FetoinfantSurv <-
-  function (x, pars, split, component = 'total', model = 'basic') {
+  function (x, pars, component = 'total', model = 'basic') {
     
     # ontogenescent survival
     ontogen_surv <-
       NegGompertzSurv(
         x = x,
-        a = pars[['a1']], b = pars[['b']],
-        alpha = pars[['alpha']], beta = pars[['beta']],
-        split = pars[['c']]
+        alpha1 = pars[['alpha1']], beta1 = pars[['beta1']], # what to parse here depends on the beginning of the code
+        alpha2 = pars[['alpha2']], beta2 = pars[['beta2']],
+        zeta = pars[['zeta']]
       )
     # birth survival
     birth_surv <-
       GaussianSurv(
         x = x,
-        a = pars[['a2']], c = pars[['c']], s = pars[['s']]
+        gamma = pars[['gamma']], sigma = pars[['sigma']],
+        tau = pars[['tau']], zeta = pars[['zeta']]
       )
     
     Sx <-
@@ -224,22 +267,23 @@ FetoinfantSurv <-
 
 # feto-infant competing risks hazard
 FetoinfantHzrd <-
-  function (x, pars, split, component = 'total', model = 'basic') {
+  function (x, pars, component = 'total', model = 'basic') {
     
     # ontogenescent hazard
     ontogen_hzrd <-
       NegGompertzHzrd(
         x = x,
-        a = pars[['a1']], b = pars[['b']],
-        alpha = pars[['alpha']], beta = pars[['beta']],
-        split = pars[['c']]
+        alpha1 = pars[['alpha1']], beta1 = pars[['beta1']],
+        alpha2 = pars[['alpha2']], beta2 = pars[['beta2']],
+        zeta = pars[['zeta']]
       )
     
     # birth hazard
     birth_hzrd <-
       GaussianHzrd(
         x = x,
-        a = pars[['a2']], c = pars[['c']], s = pars[['s']]
+        gamma = pars[['gamma']], sigma = pars[['sigma']],
+        tau = pars[['tau']], zeta = pars[['zeta']]
       )
     
     hx <-
@@ -258,15 +302,16 @@ FetoinfantHzrd <-
 # interval censored likelihood
 IntervalCensoredLogLike <-
   function (pars, age, width, obsDx, obsCx, SurvFnct,
-            lambda1 = 0, lambda2 = 0, lambda3 = 0, split, model = 'basic', ...) {
+            lambda1 = 0, lambda2 = 0, lambda3 = 0, split,
+            model = 'basic', llsum = FALSE, llscale = 1, ...) {
     
     pars2 <- RescaleParameters(pars, model, split)
     cat(unlist(pars2), '\n')
     
     # predict survival on basis of parameter estimates
-    predSurvL <- SurvFnct(x = age, pars = pars2, split = split,
+    predSurvL <- SurvFnct(x = age, pars = pars2,
                           component = 'total', model = model)
-    predSurvR <- SurvFnct(x = age+width, pars = pars2, split = split,
+    predSurvR <- SurvFnct(x = age+width, pars = pars2,
                           component = 'total', model = model)
     
     loglike <-
@@ -280,7 +325,7 @@ IntervalCensoredLogLike <-
     if (isTRUE(model == 'flexible1')) {
       penalty <-
         # penalize birth hump magnitude
-        penalty <- lambda1*exp(pars[5]) +
+        lambda1*exp(pars[5]) +
         # penalize discontinuities between the two ontogenescent segments
         lambda2*(pars[3] - (pars[1]-exp(pars[2])*ScaleInverseLogit(pars[6], 10, 20)))^2 +
         # penalize differences in slope between the two ontogenescent segments
@@ -289,20 +334,96 @@ IntervalCensoredLogLike <-
     if (isTRUE(model == 'flexible2')) {
       penalty <-
         # penalize birth hump magnitude
-        penalty <- lambda1*exp(pars[5]) +
+        lambda1*exp(pars[5]) +
         # penalize discontinuities between the two ontogenescent segments
         lambda2*(pars[3] - (pars[1]-pars[2]*ScaleInverseLogit(pars[6], 10, 20)))^2 +
         # penalize differences in slope between the two ontogenescent segments
         lambda3*(pars[4]-pars[2])^2
     }
     
-    ploglike <- loglike - penalty
+    if (isTRUE(llsum)) { loglike <- sum(loglike) } 
+    loglike[is.nan(loglike)] <- Inf
+    loglike <- (loglike-penalty)*llscale
     
-    return(ploglike)
+    return(loglike)
     
   }
 
 # Fit -------------------------------------------------------------
+
+ControlFitFetoinfantSurvival <- function (
+    model = 'basic',
+    split = 15,
+    # fitting options
+    lambda1 = 0, lambda2 = 0, lambda3 = 0,
+    zeta_range = c(10, 20),
+    beta1_range = c(-0.7, 0.7),
+    beta2_range = c(-0.7, 0.7),
+    method = 'optim',
+    DEoptim_control = DEoptim::DEoptim.control(),
+    # simulation
+    simulate = TRUE, nsim = 1e3, hessian_inverse = 'cholesky',
+    exclude_from_hessian_inverse = NULL
+) {
+  control_pars <- list(
+    model = model,
+    split = split,
+    lambda1 = lambda1, lambda2 = lambda2, lambda3 = lambda3,
+    zeta_range = zeta_range,
+    beta1_range = beta1_range,
+    beta2_range = beta2_range,
+    method = method,
+    DEoptim_control = DEoptim_control,
+    simulate = simulate, nsim = nsim, hessian_inverse = hessian_inverse,
+    exclude_from_hessian_inverse = exclude_from_hessian_inverse
+  )
+  return(control_pars)
+}
+
+# Invert a Square Matrix with options for partial inversion and pseudo-inverses
+SquareMatrixInverse <- function (X, inverse = 'cholesky', exclude_from_inverse = NULL) {
+  
+  # input checks and preparation
+  if (!isTRUE(is.matrix(X))) stop('X is not matrix')
+  N = NROW(X); M = NCOL(X) 
+  if (N!=M) stop('X is not square')
+  if (is.null(colnames(X))) {
+    colnames(X) <- 1:N
+  }
+  names_X <- colnames(X)
+  
+  # exclude entries from matrix if specified
+  n_exclude <- length(exclude_from_inverse)
+  if (!is.null(exclude_from_inverse)) {
+    X_ <- X[-exclude_from_inverse, -exclude_from_inverse]
+  } else {
+    X_ <- X
+  }
+  
+  # invert (partial) matrix  
+  inverse_X <- 
+    switch(inverse,
+           cholesky = chol2inv(chol(X_)),
+           choleskypivot = chol2inv(chol(X_, pivot = TRUE)),
+           pseudo = pinv(X_))
+  
+  # if needed, restore excluded entries
+  if (!is.null(exclude_from_inverse)) {
+    names_to_exclude <- names_X[exclude_from_inverse]
+    N_removed <- length(exclude_from_inverse)
+    names_to_keep <- names_X[-exclude_from_inverse]
+    # reconstruct full matrix with 0s for previously removed entries
+    inverse_X <-
+      inverse_X %>%
+      cbind(matrix(0, nrow = N-N_removed, ncol = N_removed)) %>%
+      rbind(matrix(0, ncol = N, nrow = N_removed))
+    colnames(inverse_X) <- c(names_to_keep, names_to_exclude)
+    rownames(inverse_X) <- c(names_to_keep, names_to_exclude)
+    inverse_X <- inverse_X[names_X,names_X] # restore original order  
+  }
+  
+  return(inverse_X)
+}
 
 # Fit a parametric model of fetoinfant survival to
 # the fetoinfant lifetable assuming left truncation age
@@ -311,12 +432,9 @@ IntervalCensoredLogLike <-
 # derived from hessian in order to calculate CIs.
 FitFetoinfantSurvival <-
   function (
-    filt, lambda1 = 0, lambda2 = 0, lambda3 = 0, split = 15,
-    model = 'basic',
-    simulate = TRUE, hessian_inverse = 'cholesky'
+    filt, control = ControlFitFetoinfantSurvival()
   ) {
     
-    require(maxLik)
     require(pracma)
     
     stopifnot(any(class(filt) == 'FILT'))
@@ -328,13 +446,32 @@ FitFetoinfantSurvival <-
       group_by(stratum) %>%
       group_modify(~{
         
-        init_pars <- InitializeParameters(.x$m, model, split)
+        ### initial parameters and box constraints ###
         
-        modelfit <-
-          maxLik(
-            logLik = IntervalCensoredLogLike,
-            start  = init_pars,
-            method = 'CG',
+        init_pars <-
+          InitializeParameters(.x$m, control$model, control$split)
+        
+        if (identical(control$model, 'basic')) {
+          lower = c(-20, -20, -20, -20, -10, -10)
+          upper = c(-2, -1, 1, 10, 3, 5)          
+        }
+        if (identical(control$model, 'flexible1')) {
+          lower = c(-20, -20, -20, -20, -10, -10, -10, -10)
+          upper = c(-2, -1, -2, -1, 1, 10, 3, 5)          
+        }
+        if (identical(control$model, 'flexible2')) {
+          lower = c(-20, -10, -20, -10, -10, -10, -10, -10)
+          upper = c(-2, 10, -2, 10, 1, 10, 3, 5)          
+        }
+        
+        ### the fit ###
+        
+        if (identical(control$method, 'deoptim')) {
+          require(DEoptim)
+          modelfit <- DEoptim(
+            fn = IntervalCensoredLogLike,
+            lower = lower,
+            upper = upper,
             # data and arguments to objective function
             age =
               pull(.x, x)-24,
@@ -344,43 +481,123 @@ FitFetoinfantSurvival <-
               pull(.x, D),
             obsCx =
               pull(.x, C),
-            # hazard function
-            SurvFnct =
-              FetoinfantSurv,
-            lambda1 = lambda1,
-            lambda2 = lambda2,
-            lambda3 = lambda3,
-            split = split,
-            model = model,
-            # options
-            iterlim = 1e4
+            # survival function
+            SurvFnct = FetoinfantSurv,
+            lambda1 = control$lambda1,
+            lambda2 = control$lambda2,
+            lambda3 = control$lambda3,
+            model = control$model,
+            llsum = TRUE,
+            llscale = -1,
+            control = control$DEoptim_control
           )
+          pars_estimate <- modelfit$optim$bestmem
+          hessian <- numDeriv::hessian(
+            IntervalCensoredLogLike,
+            x = pars_estimate,
+            age =
+              pull(.x, x)-24,
+            width =
+              pull(.x, n),
+            obsDx =
+              pull(.x, D),
+            obsCx =
+              pull(.x, C),
+            # survival function
+            SurvFnct = FetoinfantSurv,
+            lambda1 = control$lambda1,
+            lambda2 = control$lambda2,
+            lambda3 = control$lambda3,
+            model = control$model,
+            llsum = TRUE
+          )
+          #control$simulate <- FALSE
+        }
+        if (identical(control$method, 'optim')) {
+          require(maxLik)
+          modelfit <-
+            maxLik(
+              logLik = IntervalCensoredLogLike,
+              start  = init_pars,
+              method = 'BFGS',
+              # data and arguments to objective function
+              age =
+                pull(.x, x)-24,
+              width =
+                pull(.x, n),
+              obsDx =
+                pull(.x, D),
+              obsCx =
+                pull(.x, C),
+              # survival function
+              SurvFnct = FetoinfantSurv,
+              lambda1 = control$lambda1,
+              lambda2 = control$lambda2,
+              lambda3 = control$lambda3,
+              model = control$model,
+              llsum = FALSE,
+              llscale = 1,
+              # options
+              iterlim = 1e4
+            )
+          pars_estimate <- coef(modelfit)
+          hessian <- modelfit$hessian
+        }
+        
+        ### posterior simulation ###
         
         # 1000 draws from the posterior parameter distribution
         # assuming multivariate normal derived from hessian
         par_draw <-
           expand_grid(
-            draw = 1:1000,
+            draw = 1:control$nsim,
             name = names(init_pars)
           )
-        if (isTRUE(simulate)) {
+        if (isTRUE(control$simulate)) {
           hessian_inverse <- 
-            switch(hessian_inverse,
-                   cholesky = chol2inv(-modelfit$hessian),
-                   pseudo = pinv(-modelfit$hessian))
+            SquareMatrixInverse(
+              -hessian,
+              inverse = control$hessian_inverse,
+              exclude_from_inverse = control$exclude_from_hessian_inverse
+            )
           par_draw$value <- MASS::mvrnorm(
-            n = 1e3,
-            mu = modelfit$estimate,
+            n = control$nsim,
+            mu = pars_estimate,
             Sigma = hessian_inverse
           ) %>% t() %>% c()
         } else {
-          par_draw$value <- rep(modelfit$estimate, 1e3)
+          par_draw$value <- rep(pars_estimate, control$nsim)
         }
+        
+        # rescale posterior simulations for use with
+        # FetoinfantSurv/Hzrd functions
+        par_draw_rescaled <-
+          par_draw %>%
+          group_by(draw) %>%
+          group_modify(~{
+            pars <- RescaleParameters(
+              .x$value, control$model, control$split,
+              zeta_range = control$zeta_range,
+              beta1_range = control$beta1_range,
+              beta2_range = control$beta2_range
+            )
+            tibble(name = names(pars), value = unlist(pars))
+          })
         
         # summarise parameter draws into
         # point estimates and credible intervals
         pars <-
           par_draw %>%
+          group_by(name) %>%
+          summarise(
+            avg = mean(value),
+            se = sd(value),
+            ci025 = quantile(value, 0.025),
+            ci975 = quantile(value, 0.975)
+          )
+        
+        pars_rescaled <-
+          par_draw_rescaled %>%
           group_by(name) %>%
           summarise(
             avg = mean(value),
@@ -400,7 +617,12 @@ FitFetoinfantSurvival <-
           par_draw %>%
           group_by(draw) %>%
           group_modify(~{
-            pars <- RescaleParameters(.x$value, model, split)
+            pars <- RescaleParameters(
+              .x$value, control$model, control$split,
+              zeta_range = control$zeta_range,
+              beta1_range = control$beta1_range,
+              beta2_range = control$beta2_range
+            )
             tibble(
               # weeks since left truncation age
               x =
@@ -413,7 +635,7 @@ FitFetoinfantSurvival <-
                   x,
                   pars = pars,
                   component = 'total',
-                  model = model
+                  model = control$model
                 ),
               # probability of fetoinfant death until x
               total_Fx =
@@ -428,7 +650,7 @@ FitFetoinfantSurvival <-
                   x,
                   pars = pars,
                   component = 'total',
-                  model = model
+                  model = control$model
                 ),
               # hazard of birth component at x
               birth_hx =
@@ -436,7 +658,7 @@ FitFetoinfantSurvival <-
                   x,
                   pars = pars,
                   component = 'birth',
-                  model = model
+                  model = control$model
                 ),
               # hazard of ontogenescent component at x
               ontogen_hx =
@@ -444,7 +666,7 @@ FitFetoinfantSurvival <-
                   x,
                   pars = pars,
                   component = 'ontogen',
-                  model = model
+                  model = control$model
                 ),
               # cumulative probability of death due
               # to birth component
@@ -484,15 +706,26 @@ FitFetoinfantSurvival <-
           ) %>%
           ungroup()
         
+        ### stratum specific output object ###
+        
         tibble(
-          convergence = modelfit$code,
-          loglike = maxValue(modelfit),
+          # maximum log likelihood
+          loglike = list(pars_estimate),
+          # posterior parameter simulations on fitting scale
           par_draws = list(par_draw),
           par_summary = list(pars),
-          hessian = list(modelfit$hessian),
-          model = list(modelfit),
+          # posterior parameter simulations on evaluation scale
+          par_rescaled_draws = list(par_draw_rescaled),
+          par_rescaled_summary = list(pars_rescaled),
+          # posterior derived statistics simulations
           pred_draws = list(pred_draw),
           pred_summary = list(pred),
+          # information on fit
+          hessian = list(hessian),
+          model = list(modelfit),
+          control = list(control),
+          par_init = list(init_pars),
+          # input data
           lifetable = list(.x)
         )
         
@@ -511,18 +744,24 @@ FitFetoinfantSurvival <-
 PlotHazards <-
   function(
     filt_fit,
-    ylab,
     xbrk = cnst$gestage_brk,
     xlim =
       c(cnst$left_truncation_gestage,
         cnst$right_censoring_gestage-0.1),
+    ylim_hx = NULL,
+    ylim_Fx = NULL,
     scaler = 1e5,
     legend = TRUE,
-    colors = fig_spec$discrete_colors
+    colors = fig_spec$discrete_colors,
+    components = FALSE,
+    ar = 0.85,
+    notitle = FALSE
   ) {
     
-    # aspect ratio
-    ar <- 0.85
+    legend_pos <- c(0.8, 0.8)
+    if (!isTRUE(legend)) {
+      legend_pos <- 'none'
+    }
     
     lifetables <-
       filt_fit %>% unnest_legacy(lifetable)
@@ -565,11 +804,9 @@ PlotHazards <-
         size = fig_spec$line_size_m
       ) +
       scale_y_continuous(
-        paste0('Feto-infant deaths per\n',
-               formatC(scaler, format = 'd', big.mark = ','),
-               ' person-weeks at risk'),
-        breaks = c(seq(2, 10, 2), seq(20, 80, 20)),
-        trans = 'log10'
+        breaks = c(1, seq(2, 10, 2), seq(20, 80, 20)),
+        trans = 'log10',
+        name = NULL
       ) +
       scale_x_continuous(
         'Week of gestation',
@@ -586,10 +823,37 @@ PlotHazards <-
       ) +
       fig_spec$MyGGplotTheme(ar = ar) +
       theme(
-        legend.position = ifelse(legend, c(0.8, 0.8), 'none'),
+        legend.position = legend_pos,
         legend.background = element_blank(),
         legend.box.background = element_blank()
-      )
+      ) +
+      labs(
+        subtitle = paste0('Feto-infant deaths per\n',
+                          formatC(scaler, format = 'd', big.mark = ','),
+                          ' weeks at risk')
+      ) +
+      coord_cartesian(ylim = ylim_hx)
+    
+    if (isTRUE(components)) {
+      plot_hzrd <-
+        plot_hzrd +
+        geom_line(
+          aes(
+            x = x, y = avg_birth_hx*scaler, group = stratum,
+            color = as.character(stratum)
+          ),
+          size = fig_spec$line_size_m,
+          data = predictions
+        ) +
+        geom_line(
+          aes(
+            x = x, y = avg_ontogen_hx*scaler, group = stratum,
+            color = as.character(stratum)
+          ),
+          size = fig_spec$line_size_m,
+          data = predictions
+        )
+    }
     
     plot_surv <-
       lifetables %>%
@@ -626,10 +890,7 @@ PlotHazards <-
         data = predictions
       ) +
       scale_y_continuous(
-        paste0('Cumulative feto-infant deaths\n',
-               'out of ', formatC(scaler, format = 'd',
-                                  big.mark = ','),
-               ' cohort members')
+        name = NULL
       ) +
       scale_color_manual(values = colors) +
       scale_x_continuous(
@@ -639,10 +900,21 @@ PlotHazards <-
         '',
         values = colors
       ) +
+      coord_cartesian(ylim = ylim_Fx) +
       fig_spec$MyGGplotTheme(ar = ar) +
       theme(
         legend.position = 'none'
+      ) +
+      labs(subtitle = paste0('Cumulative feto-infant deaths\n',
+                          'out of ', formatC(scaler, format = 'd',
+                                             big.mark = ','),
+                          ' cohort members')
       )
+    
+    if (isTRUE(notitle)) {
+      plot_surv <- plot_surv + labs(subtitle = NULL)
+      plot_hzrd <- plot_hzrd + labs(subtitle = NULL)
+    }
     
     cowplot::plot_grid(plot_hzrd, plot_surv, ncol = 2, align = 'h')
     
@@ -673,7 +945,8 @@ ProbFetoInfantDeath <-
       select(contains(c(
         'stratum',
         'total_Fx', 'total_iFx',
-        'birth_Fx', 'birth_iFx'
+        'birth_Fx', 'birth_iFx',
+        'ontogen_Fx', 'ontogen_iFx'
       )))
     
   }
