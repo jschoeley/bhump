@@ -7,6 +7,7 @@
 # Init ------------------------------------------------------------
 
 library(yaml); library(dplyr)
+library(qs2)
 
 #memory.limit(64000)
 
@@ -21,7 +22,7 @@ paths$input <- list(
   zip_fetus = 'dat/10-nchs-us_fetal_deaths/'
 )
 paths$output <- list(
-  fetoinfant = 'tmp/20-fetoinfant.RData'
+  fetoinfant = 'tmp/20-fetoinfant.qs'
 )
 
 # codebook function
@@ -63,7 +64,7 @@ fetoinfant <-
 
 # Save ------------------------------------------------------------
 
-save(
+qs_save(
   fetoinfant,
   file = paths$output$fetoinfant
 )

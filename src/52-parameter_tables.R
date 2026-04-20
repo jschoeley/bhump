@@ -2,15 +2,16 @@
 
 # Init ------------------------------------------------------------
 
+library(qs2)
 library(tidyverse)
 
 paths <- list()
 paths$input <- list(
   config = 'cfg/config.yaml',
-  competing_risk_model_fits = 'tmp/50-competing_risks_model_fits.rds'
+  competing_risk_model_fits = 'tmp/50-competing_risks_model_fits.qs'
 )
 paths$output <- list(
-  competing_risk_model_parameter_tables = 'tmp/52-competing_risks_model_parameter_tables.rds'
+  competing_risk_model_parameter_tables = 'tmp/52-competing_risks_model_parameter_tables.qs'
 )
 
 config <- yaml::read_yaml(paths$input$config)
@@ -20,7 +21,7 @@ partab <- list()
 
 # Load data -------------------------------------------------------
 
-fit <- readRDS(paths$input$competing_risk_model_fits)
+fit <- qs_read(paths$input$competing_risk_model_fits)
 
 # Parameter tables --------------------------------------------------------
 
@@ -70,4 +71,4 @@ do.call(rbind, partab) |>
 
 # Export ----------------------------------------------------------
 
-saveRDS(partab, paths$output$competing_risk_model_parameter_tables)
+qs_save(partab, paths$output$competing_risk_model_parameter_tables)

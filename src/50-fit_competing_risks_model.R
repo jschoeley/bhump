@@ -6,18 +6,19 @@
 
 set.seed(1987)
 
+library(qs2)
 library(tidyverse)
 
 paths <- list()
 paths$input <- list(
   figure_specs = 'src/00-figure_specifications.R',
-  fetoinfant_lifetables = 'out/30-fetoinfant_lifetables.RData',
+  fetoinfant_lifetables = 'out/30-fetoinfant_lifetables.qs',
   lifetable_functions = 'src/00-fnct-feto_infant_lt.R',
   parametric_functions = 'src/00-fnct-parametric_survival_model.R',
   config = 'cfg/config.yaml'
 )
 paths$output <- list(
-  competing_risk_model_fits = 'tmp/50-competing_risks_model_fits.rds'
+  competing_risk_model_fits = 'tmp/50-competing_risks_model_fits.qs'
 )
 
 # figure specs
@@ -44,7 +45,7 @@ fit <- list()
 # Data ------------------------------------------------------------
 
 # a list of feto-infant lifetable as FILT objects
-load(paths$input$fetoinfant_lifetables)
+filt <- qs_read(paths$input$fetoinfant_lifetables)
 
 # Fit feto-infant survival by social strata -----------------------
 
@@ -93,98 +94,130 @@ PlotHazards(fit$education)
 # Fit feto-infant survival by cause of death ----------------------
 
 # by cause of death
-fit$pcml_complications <-
+fit$PlacentaCordMembrane <-
   FitFetoinfantSurvival(
-    filt$pcml_complications,
+    filt$PlacentaCordMembrane,
     control = ControlFitFetoinfantSurvival(
-      method = 'deoptim',
-      DEoptim_control = DEoptim.control(strategy = 3)
+      method = 'optim', hessian_inverse = 'choleskypivot'
     )
   )
-PlotHazards(fit$pcml_complications)
+PlotHazards(fit$PlacentaCordMembrane)
 
-fit$congenital_malformations <-
+fit$LabourBirth <-
   FitFetoinfantSurvival(
-    filt$congenital_malformations,
-    control = ControlFitFetoinfantSurvival(method = 'deoptim')
+    filt$LabourBirth,
+    control = ControlFitFetoinfantSurvival(
+      method = 'optim', hessian_inverse = 'choleskypivot'
+    )
   )
-PlotHazards(fit$congenital_malformations)
+PlotHazards(fit$LabourBirth)
 
-fit$maternal_complications <-
+fit$Malformations <-
   FitFetoinfantSurvival(
-    filt$maternal_complications,
-    control = ControlFitFetoinfantSurvival(method = 'deoptim')
+    filt$Malformations,
+    control = ControlFitFetoinfantSurvival(
+      method = 'optim', hessian_inverse = 'choleskypivot'
+    )
   )
-PlotHazards(fit$maternal_complications)
+PlotHazards(fit$Malformations)
 
-fit$infections_parasites_toxins <-
+fit$Maternal <-
   FitFetoinfantSurvival(
-    filt$infections_parasites_toxins,
+    filt$Maternal,
+    control = ControlFitFetoinfantSurvival(
+      method = 'optim', hessian_inverse = 'choleskypivot'
+    )
+  )
+PlotHazards(fit$Maternal)
+
+fit$CerebralConvulsions <-
+  FitFetoinfantSurvival(
+    filt$CerebralConvulsions,
+    control = ControlFitFetoinfantSurvival(
+      method = 'optim', hessian_inverse = 'choleskypivot'
+    )
+  )
+PlotHazards(fit$CerebralConvulsions)
+
+fit$Infections <-
+  FitFetoinfantSurvival(
+    filt$Infections,
+    control = ControlFitFetoinfantSurvival(
+      method = 'optim', hessian_inverse = 'choleskypivot'
+    )
+  )
+PlotHazards(fit$Infections)
+
+fit$HypoxiaAsphyxie <-
+  FitFetoinfantSurvival(
+    filt$HypoxiaAsphyxie,
     control = ControlFitFetoinfantSurvival(
       method = 'deoptim', hessian_inverse = 'choleskypivot'
     )
   )
-PlotHazards(fit$infections_parasites_toxins)
+PlotHazards(fit$HypoxiaAsphyxie)
 
-# we fit a restricted model without birth hump
-fit$prematurity <-
+fit$RespiratoryCardio <-
   FitFetoinfantSurvival(
-    filt$prematurity,
+    filt$RespiratoryCardio,
     control = ControlFitFetoinfantSurvival(
-      method = 'optim', simulate = TRUE, hessian_inverse = 'choleskypivot',
-      model = 'flexible1',  lambda1 = 1e6, lambda2 = 10,
-      # exclude birth hump parameters as they don't contribute to fit
-      exclude_from_hessian_inverse = c(5, 7, 8)
+      model = 'flexible1',
+      method = 'optim', hessian_inverse = 'choleskypivot'
     )
   )
-PlotHazards(fit$prematurity)
+PlotHazards(fit$RespiratoryCardio)
+
+fit$FetalGrowthPremature <-
+  FitFetoinfantSurvival(
+    filt$FetalGrowthPremature,
+    control = ControlFitFetoinfantSurvival(
+      model = 'flexible1',
+      method = 'optim', hessian_inverse = 'choleskypivot'
+    )
+  )
+PlotHazards(fit$FetalGrowthPremature)
 
 # we fit a restricted model without birth hump
-fit$accidents_and_violence <-
+fit$SID <-
   FitFetoinfantSurvival(
-    filt$accidents_and_violence,
+    filt$SID,
     control = ControlFitFetoinfantSurvival(
-      method = 'optim', simulate = TRUE,
       model = 'flexible2',
-      hessian_inverse = 'choleskypivot',
+      method = 'optim', hessian_inverse = 'choleskypivot',
+      lambda1 = 1e3,
       # exclude birth hump parameters as they don't contribute to fit
       exclude_from_hessian_inverse = c(5, 7, 8)
     )
   )
-PlotHazards(fit$accidents_and_violence)
+PlotHazards(fit$SID)
 
-# we fit a restricted model without birth hump
-fit$sids <-
+fit$UnspecificStillbirth <-
   FitFetoinfantSurvival(
-    filt$sids,
+    filt$UnspecificStillbirth,
     control = ControlFitFetoinfantSurvival(
-      simulate = TRUE,
-      model = 'flexible2',
-      hessian_inverse = 'choleskypivot',
-      # exclude birth hump parameters as they don't contribute to fit
-      exclude_from_hessian_inverse = c(5, 7, 8)
+      method = 'optim', hessian_inverse = 'choleskypivot'
     )
   )
-PlotHazards(fit$sids)
+PlotHazards(fit$UnspecificStillbirth)
 
-fit$unspecific_stillbirth <-
+fit$Other <-
   FitFetoinfantSurvival(
-    filt$unspecific_stillbirth,
+    filt$Other,
     control = ControlFitFetoinfantSurvival(
-      method = 'deoptim', model = 'basic'
+      method = 'optim', hessian_inverse = 'choleskypivot'
     )
   )
-PlotHazards(fit$unspecific_stillbirth)
+PlotHazards(fit$Other)
 
-fit$other <-
+fit$Unknown <-
   FitFetoinfantSurvival(
-    filt$other,
+    filt$Unknown,
     control = ControlFitFetoinfantSurvival(
-      method = 'deoptim', model = 'basic'
+      method = 'optim', hessian_inverse = 'choleskypivot'
     )
   )
-PlotHazards(fit$other)
+PlotHazards(fit$Other)
 
 # Export ----------------------------------------------------------
 
-saveRDS(fit, paths$output$competing_risk_model_fits)
+qs_save(fit, paths$output$competing_risk_model_fits)

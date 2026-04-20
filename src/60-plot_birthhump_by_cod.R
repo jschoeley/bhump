@@ -2,12 +2,13 @@
 
 # Init ------------------------------------------------------------
 
+library(qs2)
 library(tidyverse)
 
 paths <- list()
 paths$input <- list(
   lifetables_and_parametric_fits_by_cod =
-    'tmp/51-lifetables_and_parametric_fits_by_cod.rds',
+    'tmp/51-lifetables_and_parametric_fits_by_cod.qs',
   figure_specs = 'src/00-figure_specifications.R',
   config = 'cfg/config.yaml'
 )
@@ -31,7 +32,7 @@ cnst <-
 
 # Load data -------------------------------------------------------
 
-filt_cod <- readRDS(paths$input$lifetables_and_parametric_fits_by_cod)
+filt_cod <- qs_read(paths$input$lifetables_and_parametric_fits_by_cod)
 
 # Plot birth hump composition by COD ------------------------------
 
@@ -62,8 +63,8 @@ birthhump_cod_separate$data <-
   select(cod, x, avg_birth_hx) |>
   mutate(
     cod = factor(cod, config$cod_lookup$label, config$cod_lookup$label)
-  ) |>
-  filter(!cod %in% c('Prematurity', 'Accidents and violence', 'Sudden Infant Death'))
+  )# |>
+  #filter(!cod %in% c('Prematurity', 'Accidents and violence', 'Sudden Infant Death'))
 
 birthhump_cod_separate$plot <-
   birthhump_cod_separate$data |>
@@ -82,7 +83,7 @@ birthhump_cod_separate$plot
 
 # Export ----------------------------------------------------------
 
-saveRDS(birthhump_cod_joint$data, 'out/60-birthhump_cod_joint.rds')
+qs_save(birthhump_cod_joint$data, 'out/60-birthhump_cod_joint.qs')
 fig_spec$ExportPDF(
   birthhump_cod_joint$plot,
   '60-birthhump_cod_joint',
@@ -91,7 +92,7 @@ fig_spec$ExportPDF(
   height = fig_spec$width*0.6
 )
 
-saveRDS(birthhump_cod_separate$data, 'out/60-birthhump_cod_separate.rds')
+qs_save(birthhump_cod_separate$data, 'out/60-birthhump_cod_separate.qs')
 fig_spec$ExportPDF(
   birthhump_cod_separate$plot,
   '60-birthhump_cod_separate',

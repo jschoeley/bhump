@@ -2,17 +2,18 @@
 
 # Init ------------------------------------------------------------
 
+library(qs2)
 library(tidyverse)
 library(yaml)
 
 paths <- list()
 paths$input <- list(
-  fetoinfant = 'tmp/21-fetoinfant.RData',
+  fetoinfant = 'tmp/21-fetoinfant.qs',
   lifetable_functions = 'src/00-fnct-feto_infant_lt.R',
   config = 'cfg/config.yaml'
 )
 paths$output <- list(
-  fetoinfant_lt = 'out/30-fetoinfant_lifetables.RData'
+  fetoinfant_lt = 'out/30-fetoinfant_lifetables.qs'
 )
 
 # multistate aggregation of events and exposure times
@@ -27,7 +28,7 @@ config <- read_yaml(paths$input$config)
 # Load data -------------------------------------------------------
 
 # individual level event history data on feto-infant survival
-load(paths$input$fetoinfant)
+fetoinfant_event_histories <- qs_read(paths$input$fetoinfant)
 
 # Recode categorical strata ---------------------------------------
 
@@ -156,4 +157,4 @@ map(config$cod_lookup$key, ~{
 
 # Export ----------------------------------------------------------
 
-save(filt, file = paths$output$fetoinfant_lt)
+qs_save(filt, file = paths$output$fetoinfant_lt)

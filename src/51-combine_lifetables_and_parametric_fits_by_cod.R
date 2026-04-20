@@ -2,18 +2,19 @@
 
 # Init ------------------------------------------------------------
 
+library(qs2)
 library(tidyverse)
 
 paths <- list()
 paths$input <- list(
-  fetoinfant_lifetables = 'out/30-fetoinfant_lifetables.RData',
-  competing_risk_model_fits = 'tmp/50-competing_risks_model_fits.rds',
+  fetoinfant_lifetables = 'out/30-fetoinfant_lifetables.qs',
+  competing_risk_model_fits = 'tmp/50-competing_risks_model_fits.qs',
   figure_specs = 'src/00-figure_specifications.R',
   config = 'cfg/config.yaml'
 )
 paths$output <- list(
   lifetables_and_parametric_fits_by_cod =
-    'tmp/51-lifetables_and_parametric_fits_by_cod.rds'
+    'tmp/51-lifetables_and_parametric_fits_by_cod.qs'
 )
 
 # figure specs
@@ -29,9 +30,7 @@ cnst <-
 
 # Load data -------------------------------------------------------
 
-# a list of feto-infant lifetable as FILT objects
-load(paths$input$fetoinfant_lifetables)
-fit <- readRDS(paths$input$competing_risk_model_fits)
+fit <- qs_read(paths$input$competing_risk_model_fits)
 
 # Assemble lifetables and fit for cause of death ------------------
 
@@ -78,7 +77,7 @@ lifetables_and_parametric_fits_by_cod %>%
 
 # Export ----------------------------------------------------------
 
-saveRDS(
+qs_save(
   lifetables_and_parametric_fits_by_cod,
   paths$output$lifetables_and_parametric_fits_by_cod
 )

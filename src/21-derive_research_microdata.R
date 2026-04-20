@@ -3,21 +3,22 @@
 
 # Init ------------------------------------------------------------
 
+library(qs2)
+library(readr)
 library(data.table)
 library(lubridate)
 library(magrittr)
-library(readxl)
-#library(tidyverse)
 
 # use all available CPUs
 setDTthreads(0)
 
 paths <- list()
 paths$input <- list(
-  fetoinfant = 'tmp/20-fetoinfant.RData'
+  fetoinfant = 'tmp/20-fetoinfant.qs',
+  cod = 'dat/10-cod-list/cod_04_17.csv'
 )
 paths$output <- list(
-  fetoinfant = 'tmp/21-fetoinfant.RData'
+  fetoinfant = 'tmp/21-fetoinfant.qs'
 )
 
 # constants
@@ -30,7 +31,7 @@ cnst <-
 # Load data -------------------------------------------------------
 
 # US fetal- infant deaths and births individual level data
-load(paths$input$fetoinfant)
+fetoinfant <- qs_read(paths$input$fetoinfant)
 setDT(fetoinfant)
 
 # Subset ----------------------------------------------------------
@@ -102,28 +103,11 @@ dcast(
 
 # Recode cause of death categories --------------------------------
 
-# cod_codes <- read_xlsx("./dat/10-cod-list/cod.xlsx")[-c(3,4,5)]
-# 
-# fetoinfant <- merge(fetoinfant, cod_codes, by = "cod_icd10", all.x = TRUE)
-# 
-# fetoinfant[
-#   ,
-#   cod_cat := fcase(
-#     (date_of_delivery_y == 2014 & type == "fetus" & cod_icd10 == ''), 'other',
-#     (date_of_delivery_y == 2015 & type == "fetus" & cod_icd10 == '') , 'other',
-#     (cod_cat == "maternal_complications" & age_at_death_d >= 100), 'other',
-#     (cod_cat == "pcml_complications" & age_at_death_d >= 100), 'other',
-#     !is.na(cod_icd10), cod_cat,
-#     default = NA
-#   )
-# ]
-
-# Recode cause of death categories 2 ------------------------------
-
 # load mapping between cod categories and icd-10 codes
-cod_codes <- read_xlsx("./dat/10-cod-list/cod.xlsx")
+cod_codes <- read_csv(paths$input$cod)
 cod_codes <- as.data.table(cod_codes)
-cod_codes <- cod_codes[,.(cod_icd10, cod_cat = cod_cat_2)]
+# select relevant cod coding here
+cod_codes <- cod_codes[,.(cod_icd10, cod_cat = cod_cat_4)]
 
 # add cod categories to data
 fetoinfant <-
@@ -134,17 +118,17 @@ fetoinfant[
   ,
   cod_cat := fcase(
     # code 'other' category
-    (type == "fetus" & (cod_icd10 == '' | is.na(cod_icd10))),
-    'other',
+    (type == "fetus" & (cod_icd10 == '' | is.na(cod_icd10))), 'Other',
+    (type == "infant" & (cod_icd10 == '' | is.na(cod_icd10))), 'Other',
     #(cod_cat == "maternal_complications" & age_at_death_d >= 100), 'other',
     #(cod_cat == "pcml_complications" & age_at_death_d >= 100), 'other',
     # prematurity only if gestation at birth was early
     (startsWith(cod_icd10, c('P22', 'P26', 'P27', 'P28')) &
-       gestation_at_delivery_w >= 37),
-    'other',
+       gestation_at_delivery_w >= 37), 'Other',
+    # explicit NAs
+    is.na(cod_icd10), 'Unknown',
     # defaults
-    !is.na(cod_icd10),
-    cod_cat,
+    !is.na(cod_icd10), cod_cat,
     default = NA
   )
 ]
@@ -446,68 +430,66 @@ fetoinfant_event_histories <-
 # Consistency checks --------------------------------------------
 
 # cohort size matches
-fetoinfant[,.N] == fetoinfant_event_histories[,length(unique(id))]
-
-# number of fetal deaths matches
-fetoinfant_event_histories[
-  origin == 'fetus' & destination == 'death',
-  .N
-  ] ==
-  fetoinfant[
-    fetal_death == TRUE,
-    .N
-    ]
-# number of neonatal deaths matches
-fetoinfant_event_histories[
-  origin == 'neonate' & destination == 'death',
-  .N
-  ] ==
-  fetoinfant[
-    neonatal_death == TRUE,
-    .N
-    ]
-# number of post-neonatal deaths matches
-fetoinfant_event_histories[
-  origin == 'postneonate' & destination == 'death',
-  .N
-  ] ==
-  fetoinfant[
-    postneonatal_death == TRUE &
-      (gestage_at_postneonatal_death_w < gestage_at_censoring_w),
-    .N
-    ]
-# number of censorings matches
-fetoinfant_event_histories[
-  origin == 'postneonate' & destination == 'censored',
-  .N
-  ] ==
-  fetoinfant[
-    postneonatal_survivor == TRUE |
-      (gestage_at_postneonatal_death_w >= gestage_at_censoring_w),
-    .N
-    ]
-
-# is entry time always smaller than exit time?
-all(fetoinfant_event_histories$entry_time <
-  fetoinfant_event_histories$exit_time)
-
-# is the time of exit from a spell identical to the time
-# of entry into the next spell?
-fetoinfant_event_histories[
-  .N > 1,
-  .(same = entry_time[-1] == exit_time[-length(exit_time)]),
-  by = id
-  ][,
-    all(same)
-  ]
-
-# are all the observed cods also in the cod table?
-all(unique(fetoinfant$cod_icd10) %in% cod_codes$cod_icd10)
+stopifnot(
+  'Cohort sizes do not match between individual and event history formats' =
+    fetoinfant[,.N] == fetoinfant_event_histories[,length(unique(id))],
+  'Fetal deaths do not match between individual and event history formats' =
+    fetoinfant_event_histories[
+      origin == 'fetus' & destination == 'death',
+      .N
+    ] ==
+    fetoinfant[
+      fetal_death == TRUE,
+      .N
+    ],
+  'Neonatal deaths do not match between individual and event history formats' =
+    fetoinfant_event_histories[
+      origin == 'neonate' & destination == 'death',
+      .N
+    ] ==
+    fetoinfant[
+      neonatal_death == TRUE,
+      .N
+    ],
+  'Post-neonatal deaths do not match between individual and event history formats' =
+    fetoinfant_event_histories[
+      origin == 'postneonate' & destination == 'death',
+      .N
+    ] ==
+    fetoinfant[
+      postneonatal_death == TRUE &
+        (gestage_at_postneonatal_death_w < gestage_at_censoring_w),
+      .N
+    ],
+  'Censorings do not match between individual and event history formats' =
+    fetoinfant_event_histories[
+      origin == 'postneonate' & destination == 'censored',
+      .N
+    ] ==
+    fetoinfant[
+      postneonatal_survivor == TRUE |
+        (gestage_at_postneonatal_death_w >= gestage_at_censoring_w),
+      .N
+    ],
+  'Entry time is not always smaller than exit time' =
+    all(fetoinfant_event_histories$entry_time <
+          fetoinfant_event_histories$exit_time),
+  'Spell exit and entry times do not line up' =
+    fetoinfant_event_histories[
+      .N > 1,
+      .(same = entry_time[-1] == exit_time[-length(exit_time)]),
+      by = id
+    ][,
+      all(same)
+    ],
+  'Observed CODs are not all featured in the cod table' =
+    all(unique(fetoinfant$cod_icd10) %in% cod_codes$cod_icd10)
+)
 
 # Export ----------------------------------------------------------
 
 # save the processed microdata
-save(
+qs_save(
   fetoinfant_event_histories,
   file = paths$output$fetoinfant
 )

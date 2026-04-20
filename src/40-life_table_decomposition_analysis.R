@@ -3,6 +3,7 @@
 
 # Init ------------------------------------------------------------
 
+library(qs2)
 library(tidyverse)
 
 # figure specs
@@ -17,11 +18,11 @@ tab <- list()
 
 paths <- list()
 paths$input <- list(
-  fetoinfant_lifetables = 'out/30-fetoinfant_lifetables.RData'
+  fetoinfant_lifetables = 'out/30-fetoinfant_lifetables.qs'
 )
 paths$output <- list(
   fig = 'out',
-  tables = 'out/40-tables.rds'
+  tables = 'out/40-tables.qs'
 )
 
 # constants
@@ -36,7 +37,7 @@ cnst <- list(
 # Data ------------------------------------------------------------
 
 # feto-infant lifetables
-load(paths$input$fetoinfant_lifetables)
+filt <- qs_read(paths$input$fetoinfant_lifetables)
 
 # Plot fetoinfant mortality trajectory ----------------------------
 
@@ -376,4 +377,4 @@ fig_spec$ExportPDF(
   height = fig_spec$width*1.1
 )
 
-saveRDS(tab, paths$output$tables)
+qs_save(tab, paths$output$tables)

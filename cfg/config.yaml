@@ -1,45 +1,62 @@
 cod_lookup:
   key: [
-    'pcml_complications',
-    'congenital_malformations',
-    'maternal_complications',
-    'infections_parasites_toxins',
-    'prematurity',
-    'accidents_and_violence',
-    'sids',
-    'unspecific_stillbirth',
-    'other'
+    'PlacentaCordMembrane',
+    'LabourBirth',
+    'Malformations',
+    'Maternal',
+    'CerebralConvulsions',
+    'Infections',
+    'HypoxiaAsphyxie',
+    'RespiratoryCardio',
+    'FetalGrowthPremature',
+    'SID',
+    'UnspecificStillbirth',
+    'Other',
+    'Unknown'
   ]
   label: [
-      'Placenta, cord, membrane, labour complications',
-      'Congenital malformations, deformities and chromosomal anomalies',
-      'Maternal complications',
-      'Infections, parasites, and toxins',
-      'Prematurity',
-      'Accidents and violence',
-      'Sudden Infant Death',
-      'Unspecific stillbirth',
-      'Other'
-    ]
+    'Placenta, cord, membrane',
+    'Labour complications',
+    'Congenital malformations, deformities and chromosomal anomalies',
+    'Maternal conditions',
+    'Convulsiations and disorders of cerebral status',
+    'Infections',
+    'Hypoxia and asphyxia',
+    'Respiratory and cardiovascular disorders',
+    'Disorders related to fetal growth and prematurity',
+    'Sudden Infant Death Syndrome',
+    'Unspecific stillbirth',
+    'Other specific disorders',
+    'Unknown'
+  ]
   shortlabel: [
-      'PCML complications',
-      'Congenital malformations',
-      'Maternal complications',
-      'Infections, parasites & toxins',
-      'Prematurity',
-      'Accidents & violence',
-      'SIDS',
-      'Unspecific stillbirth',
-      'Other'
-    ]
+    'PCM complications',
+    'Labour complications',
+    'Congenital malformations',
+    'Maternal conditions',
+    'Convulsiations',
+    'Infections',
+    'Hypoxia and asphyxia',
+    'Respiratory and cardiovascular disorders',
+    'Fetal growth / prematurity',
+    'SIDS',
+    'Unspecific stillbirth',
+    'Other specific',
+    'Unknown'
+  ]
   color: [
-    '#A41D24', # pcml
+    '#A41D24', # pcm
+    '#D8262F', # labour
     '#F47C0C', # congenital malformations
     '#F3AA9B', # maternal
+    '#C94EAC', # convulsions
     '#06713B', # infection
-    '#63ABD2', # prematurity
-    '#2B1555', # accidents and violence
+    '#63ABD2', # hypoxia
+    '#3491C4', # respiratory cardio
+    '#2B1555', # prematurity
     '#C0C2DA', # sids
     '#5A5A5A', # unspecific
-    '#3A3A3E'  # other
-    ]
+    '#3A3A3E', # other
+    '#222222'  # unknown
+  ]
+
