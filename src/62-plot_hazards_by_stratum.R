@@ -2,11 +2,12 @@
 
 # Init ------------------------------------------------------------
 
+library(qs2)
 library(tidyverse)
 
 paths <- list()
 paths$input <- list(
-  competing_risk_model_fits = 'tmp/50-competing_risks_model_fits.rds',
+  competing_risk_model_fits = 'tmp/50-competing_risks_model_fits.qs',
   figure_specs = 'src/00-figure_specifications.R',
   parametric_functions = 'src/00-fnct-parametric_survival_model.R',
   config = 'cfg/config.yaml'
@@ -32,7 +33,7 @@ cnst <-
 
 # Load data -------------------------------------------------------
 
-fit <- readRDS(paths$input$competing_risk_model_fits)
+fit <- qs_read(paths$input$competing_risk_model_fits)
 
 # Plot hazards by social strata -----------------------------------
 
@@ -81,7 +82,7 @@ hazards_by_social_strata$plot
 
 # Export ----------------------------------------------------------
 
-saveRDS(hazards_by_social_strata$data, 'out/62-hazards_by_social_strata.rds')
+qs_save(hazards_by_social_strata$data, 'out/62-hazards_by_social_strata.qs')
 fig_spec$ExportPDF(
   hazards_by_social_strata$plot,
   filename = '62-hazards_by_social_strata',

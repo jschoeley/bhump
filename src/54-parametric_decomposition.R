@@ -11,16 +11,17 @@
 # Init ------------------------------------------------------------
 
 library(tidyverse)
+library(qs2)
 
 paths <- list()
 paths$input <- list(
-  competing_risk_model_fits = 'tmp/50-competing_risks_model_fits.rds',
+  competing_risk_model_fits = 'tmp/50-competing_risks_model_fits.qs',
   parametric_functions = 'src/00-fnct-parametric_survival_model.R',
   config = 'cfg/config.yaml'
 )
 paths$output <- list(
   parametric_decompositions =
-    'out/54-parametric_decompositions.rds'
+    'out/54-parametric_decompositions.qs'
 )
 
 config <- yaml::read_yaml(paths$input$config)
@@ -37,7 +38,7 @@ cnst <-
 # Load data -------------------------------------------------------
 
 # a list of feto-infant lifetable as FILT objects
-fit <- readRDS(paths$input$competing_risk_model_fits)
+fit <- qs_read(paths$input$competing_risk_model_fits)
 
 # Parametric decomposition of mortality differences -------------
 
@@ -206,4 +207,4 @@ decomp$education$primary_academic <-
 
 # Export ----------------------------------------------------------
 
-saveRDS(decomp, paths$output$parametric_decompositions)
+qs_save(decomp, paths$output$parametric_decompositions)

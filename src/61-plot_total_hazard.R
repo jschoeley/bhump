@@ -2,12 +2,13 @@
 
 # Init ------------------------------------------------------------
 
+library(qs2)
 library(tidyverse)
 
 paths <- list()
 paths$input <- list(
-  fetoinfant_lifetables = 'out/30-fetoinfant_lifetables.RData',
-  competing_risk_model_fits = 'tmp/50-competing_risks_model_fits.rds',
+  fetoinfant_lifetables = 'out/30-fetoinfant_lifetables.qs',
+  competing_risk_model_fits = 'tmp/50-competing_risks_model_fits.qs',
   figure_specs = 'src/00-figure_specifications.R',
   config = 'cfg/config.yaml'
 )
@@ -25,8 +26,8 @@ cnst <- list()
 
 # Load data -------------------------------------------------------
 
-load(paths$input$fetoinfant_lifetables)
-fit <- readRDS(paths$input$competing_risk_model_fits)
+filt <- qs_read(paths$input$fetoinfant_lifetables)
+fit <- qs_read(paths$input$competing_risk_model_fits)
 
 # Plot overall hazard ---------------------------------------------
 
@@ -69,7 +70,7 @@ overall_hazard_and_fit$plot
 
 # Export ----------------------------------------------------------
 
-saveRDS(overall_hazard_and_fit$data, 'out/61-overall_hazard_and_fit.rds')
+qs_save(overall_hazard_and_fit$data, 'out/61-overall_hazard_and_fit.qs')
 fig_spec$ExportPDF(
   overall_hazard_and_fit$plot,
   '61-overall_hazard_and_fit',

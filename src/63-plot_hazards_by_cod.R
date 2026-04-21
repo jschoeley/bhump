@@ -2,14 +2,15 @@
 
 # Init ------------------------------------------------------------
 
+library(qs2)
 library(tidyverse)
 
 paths <- list()
 paths$input <- list(
   lifetables_and_parametric_fits_by_cod =
-    'tmp/51-lifetables_and_parametric_fits_by_cod.rds',
+    'tmp/51-lifetables_and_parametric_fits_by_cod.qs',
   competing_risks_statistics =
-    'out/53-competing_risks_statistics.rds',
+    'out/53-competing_risks_statistics.qs',
   figure_specs = 'src/00-figure_specifications.R',
   config = 'cfg/config.yaml'
 )
@@ -27,8 +28,8 @@ cnst <- list()
 
 # Load data -------------------------------------------------------
 
-filt_cod <- readRDS(paths$input$lifetables_and_parametric_fits_by_cod)
-cr <- readRDS(paths$input$competing_risks_statistics)
+filt_cod <- qs_read(paths$input$lifetables_and_parametric_fits_by_cod)
+cr <- qs_read(paths$input$competing_risks_statistics)
 
 # Plot hazards by COD ---------------------------------------------
 
@@ -92,11 +93,11 @@ hazards_by_cod$plot
 
 # Export ----------------------------------------------------------
 
-saveRDS(hazards_by_cod$data, 'out/63-hazards_by_cod.rds')
+qs_save(hazards_by_cod$data, 'out/63-hazards_by_cod.qs')
 fig_spec$ExportPDF(
   hazards_by_cod$plot,
   '63-hazards_by_cod',
   'out',
   width = fig_spec$width,
-  height = 0.8*fig_spec$width
+  height = fig_spec$width
 )
