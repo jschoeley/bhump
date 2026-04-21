@@ -321,7 +321,7 @@ IntervalCensoredLogLike <-
     # rescale to constrained scale for evaluating survival functions
     pars2 <- RescaleParameters(pars, model, split,
                                zeta_range = zeta_range,
-                               beta1_range = beta1_rage,
+                               beta1_range = beta1_range,
                                beta2_range = beta2_range)
     cat(unlist(pars2), '\n')
     
@@ -356,7 +356,7 @@ IntervalCensoredLogLike <-
     if (isTRUE(model == 'flexible2')) {
       penalty <-
         # penalize birth hump magnitude
-        lambda1*pars$gamma +
+        lambda1*pars2$gamma +
         # penalize discontinuities between the two ontogenescent segments on log scale
         # (log-alpha2 - (log-alpha1 - beta1*zeta))^2
         lambda2*(pars[3] - (pars[1]-pars2$beta1*pars2$zeta))^2 +
