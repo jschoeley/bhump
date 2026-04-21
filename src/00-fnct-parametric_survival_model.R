@@ -29,6 +29,7 @@ RescaleParameters <- function (
 ) {
   rescaled_parameters <- switch(
     model,
+    # negative exponential plus birth hump
     basic = function () {
       p <- list()
       p$alpha1 = exp(pars[1])
@@ -41,6 +42,7 @@ RescaleParameters <- function (
       p$tau = exp(pars[6])
       return(p)
     },
+    # segmented two-part negative exponential plus birth hump
     flexible1 = function () {
       p <- list()
       p$alpha1 = exp(pars[1])
@@ -53,6 +55,7 @@ RescaleParameters <- function (
       p$tau = exp(pars[8])
       return(p)
     },
+    # segmented two-part exponential (possibly non-monotonous) plus birth hump
     flexible2 = function () {
       p <- list()
       p$alpha1 = exp(pars[1])
@@ -72,8 +75,11 @@ RescaleParameters <- function (
 # Parameter Initialization ----------------------------------------
 
 InitializeParameters <- function (m, model = 'basic', split = 14) {
+  
   initial_scaled_parameters <- switch(
+    
     model,
+    
     basic = function () {
       p <- list()
       # log hazard at t=0
@@ -102,6 +108,7 @@ InitializeParameters <- function (m, model = 'basic', split = 14) {
       p$tau = log(2.7)
       return(p)
     },
+    
     flexible1 = function () {
       p <- list()
       # log hazard at t=0
@@ -123,6 +130,7 @@ InitializeParameters <- function (m, model = 'basic', split = 14) {
       p$tau = log(2.7)
       return(p)
     },
+    
     flexible2 = function () {
       p <- list()
       # log hazard at t=0
@@ -143,6 +151,7 @@ InitializeParameters <- function (m, model = 'basic', split = 14) {
       p$tau = log(2.7)
       return(p)
     }
+  
   )
   
   init_pars_pre <- initial_scaled_parameters()
@@ -318,10 +327,12 @@ IntervalCensoredLogLike <-
       obsDx*log(predSurvL-predSurvR) + obsCx*log(predSurvR)
     
     penalty <- 0
+    
     if (isTRUE(model == 'basic')) {
       # penalize birth hump magnitude
       penalty <- lambda1*exp(pars[3])
     }
+    
     if (isTRUE(model == 'flexible1')) {
       penalty <-
         # penalize birth hump magnitude
@@ -331,6 +342,7 @@ IntervalCensoredLogLike <-
         # penalize differences in slope between the two ontogenescent segments
         lambda3*(pars[4]-pars[2])^2
     }
+    
     if (isTRUE(model == 'flexible2')) {
       penalty <-
         # penalize birth hump magnitude
@@ -511,8 +523,8 @@ FitFetoinfantSurvival <-
             model = control$model,
             llsum = TRUE
           )
-          #control$simulate <- FALSE
         }
+        
         if (identical(control$method, 'optim')) {
           require(maxLik)
           modelfit <-
