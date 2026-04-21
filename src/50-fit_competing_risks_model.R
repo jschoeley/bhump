@@ -52,7 +52,7 @@ filt <- qs_read(paths$input$fetoinfant_lifetables)
 # total
 fit$total14 <-
   filt$total14 |> FitFetoinfantSurvival(
-    control = ControlFitFetoinfantSurvival(method = 'deoptim')
+    control = ControlFitFetoinfantSurvival(hessian_inverse = 'choleskypivot')
   )
 PlotHazards(fit$total14, components = FALSE, colors = 'black')
 
@@ -61,7 +61,7 @@ fit$sex <-
   filt$sex14 |>
   filter(stratum != 'Unknown') |>
   FitFetoinfantSurvival(
-    control = ControlFitFetoinfantSurvival(method = 'deoptim')
+    control = ControlFitFetoinfantSurvival(hessian_inverse = 'choleskypivot')
   )
 PlotHazards(fit$sex)
 
@@ -69,7 +69,7 @@ PlotHazards(fit$sex)
 fit$cohort <-
   filt$cohort |>
   FitFetoinfantSurvival(
-    control = ControlFitFetoinfantSurvival(method = 'deoptim'))
+    control = ControlFitFetoinfantSurvival(hessian_inverse = 'choleskypivot'))
 PlotHazards(fit$cohort)
 
 # by origin
@@ -79,7 +79,7 @@ fit$origin <-
     stratum %in% c('Hispanic', 'Non-Hispanic White', 'Non-Hispanic Black')
   ) |> 
   FitFetoinfantSurvival(
-    control = ControlFitFetoinfantSurvival(method = 'deoptim')
+    control = ControlFitFetoinfantSurvival(hessian_inverse = 'choleskypivot')
   )
 PlotHazards(fit$origin)
 
@@ -87,7 +87,10 @@ fit$education <-
   filt$education14 |>
   filter(stratum != 'Unknown') |>
   FitFetoinfantSurvival(
-    control = ControlFitFetoinfantSurvival(method = 'deoptim')
+    control = ControlFitFetoinfantSurvival(
+      hessian_inverse = 'choleskypivot',
+      zeta_range = c(36, 40)-cnst$left_truncation_gestage
+    )
   )
 PlotHazards(fit$education)
 
@@ -97,35 +100,38 @@ PlotHazards(fit$education)
 fit$PlacentaCordMembrane <-
   FitFetoinfantSurvival(
     filt$PlacentaCordMembrane,
-    control = ControlFitFetoinfantSurvival()
+    control = ControlFitFetoinfantSurvival(hessian_inverse = 'choleskypivot')
   )
 PlotHazards(fit$PlacentaCordMembrane)
 
 fit$LabourBirth <-
   FitFetoinfantSurvival(
     filt$LabourBirth,
-    control = ControlFitFetoinfantSurvival()
+    control = ControlFitFetoinfantSurvival(hessian_inverse = 'choleskypivot')
   )
 PlotHazards(fit$LabourBirth)
 
 fit$Malformations <-
   FitFetoinfantSurvival(
     filt$Malformations,
-    control = ControlFitFetoinfantSurvival()
+    control = ControlFitFetoinfantSurvival(hessian_inverse = 'choleskypivot')
   )
 PlotHazards(fit$Malformations)
 
 fit$Maternal <-
   FitFetoinfantSurvival(
     filt$Maternal,
-    control = ControlFitFetoinfantSurvival()
+    control = ControlFitFetoinfantSurvival(hessian_inverse = 'choleskypivot')
   )
 PlotHazards(fit$Maternal)
 
 fit$CerebralConvulsions <-
   FitFetoinfantSurvival(
     filt$CerebralConvulsions,
-    control = ControlFitFetoinfantSurvival()
+    control = ControlFitFetoinfantSurvival(
+      zeta_range = c(39, 43)-cnst$left_truncation_gestage,
+      hessian_inverse = 'choleskypivot'
+    )
   )
 PlotHazards(fit$CerebralConvulsions)
 
@@ -133,7 +139,8 @@ fit$Infections <-
   FitFetoinfantSurvival(
     filt$Infections,
     control = ControlFitFetoinfantSurvival(
-      zeta_range = c(14, 18)
+      zeta_range = c(38, 42)-cnst$left_truncation_gestage,
+      hessian_inverse = 'choleskypivot'
     )
   )
 PlotHazards(fit$Infections)
@@ -142,7 +149,8 @@ fit$HypoxiaAsphyxie <-
   FitFetoinfantSurvival(
     filt$HypoxiaAsphyxie,
     control = ControlFitFetoinfantSurvival(
-      zeta_range = c(14, 18)
+      zeta_range = c(38, 42)-cnst$left_truncation_gestage,
+      hessian_inverse = 'choleskypivot'
     )
   )
 PlotHazards(fit$HypoxiaAsphyxie)
@@ -152,7 +160,8 @@ fit$RespiratoryCardio <-
     filt$RespiratoryCardio,
     control = ControlFitFetoinfantSurvival(
       model = 'flexible1',
-      method = 'optim', hessian_inverse = 'choleskypivot'
+      zeta_range = c(37, 41)-cnst$left_truncation_gestage,
+      hessian_inverse = 'choleskypivot'
     )
   )
 PlotHazards(fit$RespiratoryCardio)
@@ -162,7 +171,7 @@ fit$FetalGrowthPremature <-
     filt$FetalGrowthPremature,
     control = ControlFitFetoinfantSurvival(
       model = 'flexible1',
-      method = 'optim', hessian_inverse = 'choleskypivot'
+      hessian_inverse = 'choleskypivot'
     )
   )
 PlotHazards(fit$FetalGrowthPremature)
@@ -173,10 +182,8 @@ fit$SID <-
     filt$SID,
     control = ControlFitFetoinfantSurvival(
       model = 'flexible2',
-      method = 'optim', hessian_inverse = 'choleskypivot',
-      lambda1 = 1e4,
-      # exclude birth hump parameters as they don't contribute to fit
-      exclude_from_hessian_inverse = c(5, 7, 8)
+      zeta_range = c(40, 45)-cnst$left_truncation_gestage,
+      hessian_inverse = 'choleskypivot',
     )
   )
 PlotHazards(fit$SID)
@@ -184,25 +191,33 @@ PlotHazards(fit$SID)
 fit$UnspecificStillbirth <-
   FitFetoinfantSurvival(
     filt$UnspecificStillbirth,
-    control = ControlFitFetoinfantSurvival(method = 'deoptim')
+    control = ControlFitFetoinfantSurvival(
+      zeta_range = c(37, 41)-cnst$left_truncation_gestage,
+      hessian_inverse = 'choleskypivot'
+    )
   )
 PlotHazards(fit$UnspecificStillbirth)
 
 fit$Other <-
   FitFetoinfantSurvival(
     filt$Other,
-    control = ControlFitFetoinfantSurvival(method = 'deoptim')
+    control = ControlFitFetoinfantSurvival(
+      zeta_range = c(37, 41)-cnst$left_truncation_gestage,
+      hessian_inverse = 'choleskypivot'
+    )
   )
 PlotHazards(fit$Other)
 
-if (sum(filt$Unknown$D) > 0) {
-  fit$Unknown <-
-    FitFetoinfantSurvival(
-      filt$Unknown,
-      control = ControlFitFetoinfantSurvival(method = 'deoptim')
+fit$Unknown <-
+  FitFetoinfantSurvival(
+    filt$Unknown,
+    control = ControlFitFetoinfantSurvival(
+      zeta_range = c(37, 41)-cnst$left_truncation_gestage,
+      hessian_inverse = 'choleskypivot'
     )
-  PlotHazards(fit$Unknown)
-}
+  )
+PlotHazards(fit$Unknown)
+
 
 # Export ----------------------------------------------------------
 
