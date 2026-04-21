@@ -312,10 +312,17 @@ FetoinfantHzrd <-
 IntervalCensoredLogLike <-
   function (pars, age, width, obsDx, obsCx, SurvFnct,
             lambda1 = 0, lambda2 = 0, lambda3 = 0, split,
-            model = 'basic', zeta_range = c(10, 20),
+            model = 'basic',
+            zeta_range = c(10, 20),
+            beta1_range = c(-0.7, 0.7),
+            beta2_range = c(-0.7, 0.7),
             llsum = FALSE, llscale = 1, ...) {
     
-    pars2 <- RescaleParameters(pars, model, split)
+    # rescale to constrained scale for evaluating survival functions
+    pars2 <- RescaleParameters(pars, model, split,
+                               zeta_range = zeta_range,
+                               beta1_range = beta1_rage,
+                               beta2_range = beta2_range)
     cat(unlist(pars2), '\n')
     
     # predict survival on basis of parameter estimates
@@ -331,37 +338,28 @@ IntervalCensoredLogLike <-
     
     if (isTRUE(model == 'basic')) {
       # penalize birth hump magnitude
-      penalty <- lambda1*exp(pars[3])
+      penalty <- lambda1*pars2$gamma
     }
     
     if (isTRUE(model == 'flexible1')) {
       penalty <-
         # penalize birth hump magnitude
-        lambda1*exp(pars[5]) +
-        # penalize discontinuities between the two ontogenescent segments
-        lambda2*(
-          pars[3] -
-            (pars[1]-exp(pars[2])*
-               ScaleInverseLogit(
-                 pars[6], zeta_range[1], zeta_range[2]
-               ))
-        )^2 +
+        lambda1*pars2$gamma +
+        # penalize discontinuities between the two ontogenescent segments on log scale
+        # (log-alpha2 - (log-alpha1 - beta1*zeta))^2
+        lambda2*(pars[3] - (pars[1]-pars2$beta1*pars2$zeta))^2 +
         # penalize differences in slope between the two ontogenescent segments
+        # (log-beta2 - log-beta1)^2
         lambda3*(pars[4]-pars[2])^2
     }
     
     if (isTRUE(model == 'flexible2')) {
       penalty <-
         # penalize birth hump magnitude
-        lambda1*exp(pars[5]) +
-        # penalize discontinuities between the two ontogenescent segments
-        lambda2*(
-          pars[3] -
-            (pars[1]-pars[2]*
-               ScaleInverseLogit(
-                 pars[6], zeta_range[1], zeta_range[2]
-               ))
-        )^2 +
+        lambda1*pars$gamma +
+        # penalize discontinuities between the two ontogenescent segments on log scale
+        # (log-alpha2 - (log-alpha1 - beta1*zeta))^2
+        lambda2*(pars[3] - (pars[1]-pars2$beta1*pars2$zeta))^2 +
         # penalize differences in slope between the two ontogenescent segments
         lambda3*(pars[4]-pars[2])^2
     }
@@ -513,6 +511,8 @@ FitFetoinfantSurvival <-
             lambda3 = control$lambda3,
             model = control$model,
             zeta_range = control$zeta_range,
+            beta1_range = control$beta1_range,
+            beta2_range = control$beta2_range,
             llsum = TRUE,
             llscale = -1,
             control = control$DEoptim_control
