@@ -312,7 +312,8 @@ FetoinfantHzrd <-
 IntervalCensoredLogLike <-
   function (pars, age, width, obsDx, obsCx, SurvFnct,
             lambda1 = 0, lambda2 = 0, lambda3 = 0, split,
-            model = 'basic', llsum = FALSE, llscale = 1, ...) {
+            model = 'basic', zeta_range = c(10, 20),
+            llsum = FALSE, llscale = 1, ...) {
     
     pars2 <- RescaleParameters(pars, model, split)
     cat(unlist(pars2), '\n')
@@ -338,7 +339,13 @@ IntervalCensoredLogLike <-
         # penalize birth hump magnitude
         lambda1*exp(pars[5]) +
         # penalize discontinuities between the two ontogenescent segments
-        lambda2*(pars[3] - (pars[1]-exp(pars[2])*ScaleInverseLogit(pars[6], 10, 20)))^2 +
+        lambda2*(
+          pars[3] -
+            (pars[1]-exp(pars[2])*
+               ScaleInverseLogit(
+                 pars[6], zeta_range[1], zeta_range[2]
+               ))
+        )^2 +
         # penalize differences in slope between the two ontogenescent segments
         lambda3*(pars[4]-pars[2])^2
     }
@@ -348,7 +355,13 @@ IntervalCensoredLogLike <-
         # penalize birth hump magnitude
         lambda1*exp(pars[5]) +
         # penalize discontinuities between the two ontogenescent segments
-        lambda2*(pars[3] - (pars[1]-pars[2]*ScaleInverseLogit(pars[6], 10, 20)))^2 +
+        lambda2*(
+          pars[3] -
+            (pars[1]-pars[2]*
+               ScaleInverseLogit(
+                 pars[6], zeta_range[1], zeta_range[2]
+               ))
+        )^2 +
         # penalize differences in slope between the two ontogenescent segments
         lambda3*(pars[4]-pars[2])^2
     }
@@ -499,6 +512,7 @@ FitFetoinfantSurvival <-
             lambda2 = control$lambda2,
             lambda3 = control$lambda3,
             model = control$model,
+            zeta_range = control$zeta_range,
             llsum = TRUE,
             llscale = -1,
             control = control$DEoptim_control
@@ -521,6 +535,7 @@ FitFetoinfantSurvival <-
             lambda2 = control$lambda2,
             lambda3 = control$lambda3,
             model = control$model,
+            zeta_range = control$zeta_range,
             llsum = TRUE
           )
         }
@@ -547,6 +562,7 @@ FitFetoinfantSurvival <-
               lambda2 = control$lambda2,
               lambda3 = control$lambda3,
               model = control$model,
+              zeta_range = control$zeta_range,
               llsum = FALSE,
               llscale = 1,
               # options
