@@ -117,18 +117,15 @@ fetoinfant <-
 fetoinfant[
   ,
   cod_cat := fcase(
-    # code 'other' category
-    (type == "fetus" & (cod_icd10 == '' | is.na(cod_icd10))), 'Other',
-    (type == "infant" & (cod_icd10 == '' | is.na(cod_icd10))), 'Other',
-    #(cod_cat == "maternal_complications" & age_at_death_d >= 100), 'other',
-    #(cod_cat == "pcml_complications" & age_at_death_d >= 100), 'other',
     # prematurity only if gestation at birth was early
     (startsWith(cod_icd10, c('P22', 'P26', 'P27', 'P28')) &
        gestation_at_delivery_w >= 37), 'Other',
-    # explicit NAs
-    is.na(cod_icd10), 'Unknown',
+    # code explicit COD NAs for fetal death
+    (type == 'fetus' & (cod_icd10 == '' | is.na(cod_icd10))), 'Unknown',
+    # code explicit COD NAs for infant deaths
+    (type == 'infant' & !is.na(age_at_death_d) & (cod_icd10 == '' | is.na(cod_icd10))), 'Unknown',
     # defaults
-    !is.na(cod_icd10), cod_cat,
+    !(cod_icd10 == '' | is.na(cod_icd10)), cod_cat,
     default = NA
   )
 ]
