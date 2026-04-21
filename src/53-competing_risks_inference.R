@@ -66,7 +66,8 @@ tab$rho_by_cod <- list(
   BirthHumpDeaths(fit$FetalGrowthPremature, x = cnst$right_censoring_gestage),
   BirthHumpDeaths(fit$SID, x = cnst$right_censoring_gestage),
   BirthHumpDeaths(fit$UnspecificStillbirth, x = cnst$right_censoring_gestage),
-  BirthHumpDeaths(fit$Other, x = cnst$right_censoring_gestage)
+  BirthHumpDeaths(fit$Other, x = cnst$right_censoring_gestage),
+  BirthHumpDeaths(fit$Unknown, x = cnst$right_censoring_gestage)
 )
 names(tab$rho_by_cod) <- config$cod_lookup$key
 tab$rho_by_cod <- bind_rows(tab$rho_by_cod, .id = 'cod')
@@ -100,7 +101,8 @@ tab$Fx_by_cod <- list(
   ProbFetoInfantDeath(fit$FetalGrowthPremature, x = cnst$right_censoring_gestage),
   ProbFetoInfantDeath(fit$SID, x = cnst$right_censoring_gestage),
   ProbFetoInfantDeath(fit$UnspecificStillbirth, x = cnst$right_censoring_gestage),
-  ProbFetoInfantDeath(fit$Other, x = cnst$right_censoring_gestage)
+  ProbFetoInfantDeath(fit$Other, x = cnst$right_censoring_gestage),
+  ProbFetoInfantDeath(fit$Unknown, x = cnst$right_censoring_gestage)
 )
 names(tab$Fx_by_cod) <- config$cod_lookup$key
 tab$Fx_by_cod <- bind_rows(tab$Fx_by_cod, .id = 'cod')
