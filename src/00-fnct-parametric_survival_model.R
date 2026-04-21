@@ -479,11 +479,11 @@ FitFetoinfantSurvival <-
           upper = c(-2, -1, 1, 10, 3, 5)          
         }
         if (identical(control$model, 'flexible1')) {
-          lower = c(-20, -20, -20, -20, -10, -10, -10, -10)
+          lower = c(-20, -20, -20, -20, -20, -10, -10, -10)
           upper = c(-2, -1, -2, -1, 1, 10, 3, 5)          
         }
         if (identical(control$model, 'flexible2')) {
-          lower = c(-20, -10, -20, -10, -10, -10, -10, -10)
+          lower = c(-20, -10, -20, -10, -20, -10, -10, -10)
           upper = c(-2, 10, -2, 10, 1, 10, 3, 5)          
         }
         
