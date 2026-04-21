@@ -536,6 +536,8 @@ FitFetoinfantSurvival <-
             lambda3 = control$lambda3,
             model = control$model,
             zeta_range = control$zeta_range,
+            beta1_range = control$beta1_range,
+            beta2_range = control$beta2_range,
             llsum = TRUE
           )
         }
@@ -563,6 +565,8 @@ FitFetoinfantSurvival <-
               lambda3 = control$lambda3,
               model = control$model,
               zeta_range = control$zeta_range,
+              beta1_range = control$beta1_range,
+              beta2_range = control$beta2_range,
               llsum = FALSE,
               llscale = 1,
               # options
