@@ -48,11 +48,16 @@ birthhump_cod_joint$plot <-
   scale_fill_manual(values = rev(config$cod_lookup$color)) +
   scale_x_continuous(breaks = c(24, 40, 76)) +
   scale_y_continuous(expand = c(0,0)) +
-  fig_spec$MyGGplotTheme(panel_border = TRUE) +
+  fig_spec$MyGGplotTheme(panel_border = FALSE) +
   labs(y = 'Feto-infant deaths per 100K person-weeks',
        x = 'Week of gestation',
        fill = 'Cause of death') +
-  theme(legend.position = c(0.7, 0.5))
+  theme(
+    legend.position = c(0.7, 0.5),
+    legend.key.size = unit(0.4, 'cm'),
+    legend.text = element_text(size = 6),
+    legend.title = element_text(size = 6)
+  )
 birthhump_cod_joint
 
 # Separately plot birth hump by cod -------------------------------
@@ -84,10 +89,9 @@ birthhump_cod_separate$plot
 # Export ----------------------------------------------------------
 
 qs_save(birthhump_cod_joint$data, 'out/60-birthhump_cod_joint.qs')
-fig_spec$ExportPDF(
+fig_spec$ExportSVG(
   birthhump_cod_joint$plot,
-  '60-birthhump_cod_joint',
-  paths$output$figures,
+  'out/60-birthhump_cod_joint.svg',
   width = fig_spec$width,
   height = fig_spec$width*0.6
 )
