@@ -13,7 +13,8 @@ paths$input <- list(
   config = 'cfg/config.yaml'
 )
 paths$output <- list(
-  competing_risks_statistics = 'out/53-competing_risks_statistics.qs'
+  competing_risks_statistics = 'out/53-competing_risks_statistics.qs',
+  bhump_by_cod.csv = 'out/53-bhump_by_cod.csv'
 )
 
 # fetoinfant lifetable functions
@@ -120,9 +121,18 @@ tab$bhump_by_cod <-
     p_ontogen = avg_ontogen_Fx / sum(avg_ontogen_Fx)*100,
     p_total = avg_total_Fx / sum(avg_total_Fx)*100
   ) %>%
-  arrange(p_birth) %>%
+  mutate(cod = factor(
+    cod,
+    levels = config$cod_lookup$key,
+    labels = config$cod_lookup$shortlabel
+  )) |>
+  #arrange(-p_birth) %>%
   select(cod, p_birth, p_ontogen, p_total)
 
 # Export ----------------------------------------------------------
 
 qs_save(tab, paths$output$competing_risks_statistics)
+write_csv(
+  mutate(tab$bhump_by_cod, across(where(is.numeric), ~ round(.x, 2))),
+  paths$output$bhump_by_cod.csv
+)
