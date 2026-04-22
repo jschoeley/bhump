@@ -94,10 +94,9 @@ hazards_by_cod$plot
 # Export ----------------------------------------------------------
 
 qs_save(hazards_by_cod$data, 'out/63-hazards_by_cod.qs')
-fig_spec$ExportPDF(
+fig_spec$ExportSVG(
   hazards_by_cod$plot,
-  '63-hazards_by_cod',
-  'out',
+  'out/63-hazards_by_cod.svg',
   width = fig_spec$width,
-  height = fig_spec$width
+  height = 1.2*fig_spec$width
 )
