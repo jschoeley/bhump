@@ -1,6 +1,6 @@
 # Aggregate microdata on fetal and infant death to feto-infant lifetable
 
-# Init ------------------------------------------------------------
+# Init --------------------------------------------------------------------
 
 library(qs2)
 library(tidyverse)
@@ -8,29 +8,29 @@ library(yaml)
 
 paths <- list()
 paths$input <- list(
-  fetoinfant = 'tmp/21-fetoinfant.qs',
-  lifetable_functions = 'src/00-fnct-feto_infant_lt.R',
-  config = 'cfg/config.yaml'
+  fetoinfant.qs = 'tmp/21-fetoinfant.qs',
+  lifetable_functions.R = 'src/00-fnct-feto_infant_lt.R',
+  config.yaml = 'cfg/config.yaml'
 )
 paths$output <- list(
-  fetoinfant_lt = 'out/30-fetoinfant_lifetables.qs'
+  fetoinfant_lt.qs = 'out/30-fetoinfant_lifetables.qs'
 )
 
 # multistate aggregation of events and exposure times
-source(paths$input$lifetable_functions)
+source(paths$input$lifetable_functions.R)
 
 cnst <- list()
 # aggregate over each single week LMP from 24 to 77
 cnst$lifetable_breaks <- 24:77
 
-config <- read_yaml(paths$input$config)
+config <- read_yaml(paths$input$config.yaml)
 
-# Load data -------------------------------------------------------
+# Load data ---------------------------------------------------------------
 
 # individual level event history data on feto-infant survival
-fetoinfant_event_histories <- qs_read(paths$input$fetoinfant)
+fetoinfant_event_histories <- qs_read(paths$input$fetoinfant.qs)
 
-# Recode categorical strata ---------------------------------------
+# Recode categorical strata -----------------------------------------------
 
 fetoinfant_event_histories <-
   fetoinfant_event_histories |>
@@ -70,7 +70,7 @@ fetoinfant_event_histories <-
     )
   )
 
-# Aggregate observations into multistate lt -----------------------
+# Aggregate observations into multistate lt -------------------------------
 
 filt <- list()
 
@@ -140,7 +140,7 @@ filt$origineducation14 <-
   )
 filt$origineducation14
 
-# Cause of death --------------------------------------------------
+# Cause of death ----------------------------------------------------------
 
 # cohort 2014
 map(config$cod_lookup$key, ~{
@@ -155,6 +155,6 @@ map(config$cod_lookup$key, ~{
     )  
 })
 
-# Export ----------------------------------------------------------
+# Export ------------------------------------------------------------------
 
-qs_save(filt, file = paths$output$fetoinfant_lt)
+qs_save(filt, file = paths$output$fetoinfant_lt.qs)

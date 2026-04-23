@@ -1,62 +1,62 @@
 cod_lookup:
   key: [
-    'PlacentaCordMembrane',
-    'LabourBirth',
-    'Malformations',
-    'Maternal',
-    'CerebralConvulsions',
-    'Infections',
-    'HypoxiaAsphyxie',
-    'RespiratoryCardio',
-    'FetalGrowthPremature',
-    'SID',
-    'UnspecificStillbirth',
-    'Other',
-    'Unknown'
+    'pcm',
+    'labor',
+    'congenital',
+    'maternal',
+    'convulsions',
+    'sepsis',
+    'hypoxia',
+    'respiratory',
+    'prematurity',
+    'sids',
+    'otherspecific',
+    'unspecific',
+    'unknown'
   ]
   label: [
     'Placenta, cord, membrane',
-    'Labour complications',
+    'Labor complications',
     'Congenital malformations, deformities and chromosomal anomalies',
     'Maternal conditions',
-    'Convulsiations and disorders of cerebral status',
-    'Infections',
+    'Convulsions and disorders of cerebral status',
+    'Sepsis',
     'Hypoxia and asphyxia',
     'Respiratory and cardiovascular disorders',
     'Disorders related to fetal growth and prematurity',
     'Sudden Infant Death Syndrome',
-    'Unspecific stillbirth',
     'Other specific disorders',
+    'Unspecific stillbirth',
     'Unknown'
   ]
   shortlabel: [
     'PCM complications',
-    'Labour complications',
+    'Labor complications',
     'Congenital malformations',
     'Maternal conditions',
-    'Convulsiations',
-    'Infections',
+    'Convulsions',
+    'Sepsis',
     'Hypoxia and asphyxia',
-    'Respiratory and cardiovascular disorders',
-    'Fetal growth / prematurity',
+    'Respiratory and cardiovascular',
+    'Fetal growth and prematurity',
     'SIDS',
-    'Unspecific stillbirth',
     'Other specific',
+    'Unspecific stillbirth',
     'Unknown'
   ]
   color: [
     '#A41D24', # pcm
-    '#D8262F', # labour
-    '#F47C0C', # congenital malformations
+    '#D8262F', # labor
+    '#F47C0C', # congenital
     '#F3AA9B', # maternal
     '#C94EAC', # convulsions
-    '#06713B', # infection
+    '#06713B', # sepsis
     '#63ABD2', # hypoxia
-    '#3491C4', # respiratory cardio
+    '#3491C4', # respiratory
     '#2B1555', # prematurity
     '#C0C2DA', # sids
+    '#3A3A3E', # otherspecific
     '#5A5A5A', # unspecific
-    '#3A3A3E', # other
     '#222222'  # unknown
   ]
 

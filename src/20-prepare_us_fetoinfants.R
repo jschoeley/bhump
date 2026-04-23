@@ -4,38 +4,38 @@
 #     in custom codebook
 # (2) Concatenate NCHS data across multiple years
 
-# Init ------------------------------------------------------------
+# Init --------------------------------------------------------------------
 
 library(yaml); library(dplyr)
 library(qs2)
 
 #memory.limit(64000)
 
-# Constants -------------------------------------------------------
+# Constants ---------------------------------------------------------------
 
 paths <- list()
 paths$input <- list(
-  codebook_functions = 'src/00-codebook.R',
-  codebook_infant = 'cfg/codebook-us_cohort_infant_births_deaths_minimal.yaml',
-  codebook_fetus = 'cfg/codebook-us_fetal_deaths_minimal.yaml',
+  codebook_functions.R = 'src/00-codebook.R',
+  codebook_infant.yaml = 'cfg/codebook-us_cohort_infant_births_deaths_minimal.yaml',
+  codebook_fetus.yaml = 'cfg/codebook-us_fetal_deaths_minimal.yaml',
   zip_infant = 'dat/10-nchs-us_cohort_linked_infant_deaths_births/',
   zip_fetus = 'dat/10-nchs-us_fetal_deaths/'
 )
 paths$output <- list(
-  fetoinfant = 'tmp/20-fetoinfant.qs'
+  fetoinfant.qs = 'tmp/20-fetoinfant.qs'
 )
 
 # codebook function
-source(paths$input$codebook_functions)
+source(paths$input$codebook_functions.R)
 
-# Read codebook ---------------------------------------------------
+# Read codebook -----------------------------------------------------------
 
 codebook <- list()
 
-codebook$fetus <- ReadCodebook(paths$input$codebook_fetus)
-codebook$infant <- ReadCodebook(paths$input$codebook_infant)
+codebook$fetus <- ReadCodebook(paths$input$codebook_fetus.yaml)
+codebook$infant <- ReadCodebook(paths$input$codebook_infant.yaml)
 
-# Read data into R and apply varspecs -----------------------------
+# Read data into R and apply varspecs -------------------------------------
 
 infant <- ReadFromZip(
   codebook$infant, paths$input$zip_infant, subset = c(
@@ -52,7 +52,7 @@ fetus <- ReadFromZip(
     'Period2014','Period2015'
   ))
 
-# Concatenate data ------------------------------------------------
+# Concatenate data --------------------------------------------------------
 
 # merge data on births, fetal- and infant deaths cross years
 fetoinfant <-
@@ -62,9 +62,9 @@ fetoinfant <-
     .id = 'type'
   )
 
-# Save ------------------------------------------------------------
+# Export ------------------------------------------------------------------
 
 qs_save(
   fetoinfant,
-  file = paths$output$fetoinfant
+  file = paths$output$fetoinfant.qs
 )

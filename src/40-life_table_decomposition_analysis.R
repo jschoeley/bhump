@@ -1,7 +1,6 @@
-# Decomposition analysis of combined feto-infant mortality
-# over gestational age
+# Decomposition analysis of combined feto-infant mortality over gestational age
 
-# Init ------------------------------------------------------------
+# Init --------------------------------------------------------------------
 
 library(qs2)
 library(tidyverse)
@@ -18,11 +17,12 @@ tab <- list()
 
 paths <- list()
 paths$input <- list(
-  fetoinfant_lifetables = 'out/30-fetoinfant_lifetables.qs'
+  fetoinfant_lifetables.qs = 'out/30-fetoinfant_lifetables.qs'
 )
 paths$output <- list(
-  fig = 'out',
-  tables = 'out/40-tables.qs'
+  lifetable_decomposition.qs = 'out/40-lifetable_decomposition.qs',
+  gestational_age_pattern.svg = 'out/40-gestational_age_pattern.svg',
+  perinatal_popdynamics.svg = 'out/40-perinatal_popdynamics.svg'
 )
 
 # constants
@@ -34,12 +34,12 @@ cnst <- list(
   x_limits = c(24, 50)
 )
 
-# Data ------------------------------------------------------------
+# Data --------------------------------------------------------------------
 
 # feto-infant lifetables
-filt <- qs_read(paths$input$fetoinfant_lifetables)
+filt <- qs_read(paths$input$fetoinfant_lifetables.qs)
 
-# Plot fetoinfant mortality trajectory ----------------------------
+# Plot fetoinfant mortality trajectory ------------------------------------
 
 tab$total_filt <-
   filt$total14 %>%
@@ -80,13 +80,13 @@ fig$gestational_age_pattern <-
   scale_y_continuous(
     paste0('Feto-infant deaths per ',
            formatC(cnst$scaler, format = 'd', big.mark = ','),
-           '\n person-weeks at risk')
+           '\n weeks at risk')
   ) +
   fig_spec$MyGGplotTheme(ar = 0.7) +
   coord_cartesian(expand = FALSE)
 fig$gestational_age_pattern
 
-# Plot perinatal population dynamics ------------------------------
+# Plot perinatal population dynamics --------------------------------------
 
 # feto-infant life-table during the perinatal period
 tab$perinatal_filt <-
@@ -258,7 +258,7 @@ fig$perinatal_popdynamics <-
 )
 fig$perinatal_popdynamics
 
-# Decompose feto-infant mortality ---------------------------------
+# Decompose feto-infant mortality -----------------------------------------
 
 # Perform a Kitagawa decomposition of the difference in
 # combined feto-infant mortality over weeks of gestation x1 and x2.
@@ -359,22 +359,20 @@ tab$kitagawa_39_45 <-
 tab$kitagawa_45_72 <-
   DecomposeFetoInfantMortalityDynamics(filt$total14, 45, 72, scaler = 1e5)
 
-# Export ----------------------------------------------------------
+# Export ------------------------------------------------------------------
 
-fig_spec$ExportPDF(
+fig_spec$ExportSVG(
   fig$gestational_age_pattern,
-  '40-gestational_age_pattern',
-  paths$output$fig,
+  filename = paths$output$gestational_age_pattern.svg,
   width = fig_spec$width,
   height = fig_spec$width*0.7
 )
 
-fig_spec$ExportPDF(
+fig_spec$ExportSVG(
   fig$perinatal_popdynamics,
-  filename = '40-perinatal_popdynamics',
-  path = paths$output$fig,
+  filename = paths$output$perinatal_popdynamics.svg,
   width = fig_spec$width,
   height = fig_spec$width*1.1
 )
 
-qs_save(tab, paths$output$tables)
+qs_save(tab, paths$output$lifetable_decomposition.qs)

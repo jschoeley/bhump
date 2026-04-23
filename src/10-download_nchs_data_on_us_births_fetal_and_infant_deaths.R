@@ -1,15 +1,10 @@
 # Download data on US births, infant- and fetal deaths
-#
-# Jonas Schöley
-# 2020-06-10
-#
-# Download data on US births, fetal and infant deaths from the web.
 
-# Init ------------------------------------------------------------
+# Init --------------------------------------------------------------------
 
 library(yaml)
 
-# Constants -------------------------------------------------------
+# Constants ---------------------------------------------------------------
 
 # input and output paths
 setwd('.')
@@ -29,7 +24,7 @@ codebook <- list()
 codebook$infant <- read_yaml(paths$input$codebook_infant)
 codebook$fetus <- read_yaml(paths$input$codebook_fetus)
 
-# Functions -------------------------------------------------------
+# Functions ---------------------------------------------------------------
 
 # download and save files
 DownloadFiles <- function (url, save_path) {
@@ -46,7 +41,7 @@ DownloadFiles <- function (url, save_path) {
   }
 }
 
-# Download files --------------------------------------------------
+# Download files ----------------------------------------------------------
 
 files <- list()
 

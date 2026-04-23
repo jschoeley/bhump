@@ -1,11 +1,8 @@
 # Codebook functions
 #
 # Functions to read custom YAML codebook specifications.
-#
-# Jonas Schöley
-# 2020-05-14
 
-# Functions to read codebook --------------------------------------
+# Functions to read codebook ----------------------------------------------
 
 # Read Codebook from Path
 ReadCodebook <- function (path) {
@@ -61,7 +58,7 @@ OrderVarByStartPosition <- function (cbook) {
     )
 }
 
-# Functions to read from Zip files --------------------------------
+# Functions to read from Zip files ----------------------------------------
 
 ReadFromZip <- function (cbook, local_path, subset = NA) {
   
@@ -93,7 +90,7 @@ ReadFromZip <- function (cbook, local_path, subset = NA) {
   return(dat)
 }
 
-# Functions to apply codebook specs -------------------------------
+# Functions to apply codebook specs ---------------------------------------
 
 # Read Fixed Width File Using Codebook Specification
 CBookrFWF <- function (path, cbook_file) {

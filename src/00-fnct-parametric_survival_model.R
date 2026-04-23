@@ -1,4 +1,6 @@
-# Scaling functions -----------------------------------------------
+# Functions for parametric competing risks modeling of feto-infant mortality
+
+# Scaling functions -------------------------------------------------------
 
 # [a,b] -> [-Inf, Inf]
 ScaleLogit <- function(x, a, b) {
@@ -72,7 +74,7 @@ RescaleParameters <- function (
   rescaled_parameters()
 }
 
-# Parameter Initialization ----------------------------------------
+# Parameter Initialization ------------------------------------------------
 
 InitializeParameters <- function (m, model = 'basic', split = 14) {
   
@@ -192,7 +194,7 @@ InitializeParameters <- function (m, model = 'basic', split = 14) {
   
 }
 
-# Feto-infant parametric survival -------------------------------
+# Feto-infant parametric survival -----------------------------------------
 
 # baseline characteristics
 NegGompertzHzrd <-
@@ -306,7 +308,7 @@ FetoinfantHzrd <-
     
   }
 
-# Objective function --------------------------------------------
+# Objective function ------------------------------------------------------
 
 # interval censored likelihood
 IntervalCensoredLogLike <-
@@ -372,7 +374,7 @@ IntervalCensoredLogLike <-
     
   }
 
-# Fit -------------------------------------------------------------
+# Fit ---------------------------------------------------------------------
 
 ControlFitFetoinfantSurvival <- function (
     model = 'basic',
@@ -768,7 +770,7 @@ FitFetoinfantSurvival <-
     
   }
 
-# Plotting functions ----------------------------------------------
+# Plotting functions ------------------------------------------------------
 
 # This function requires the output of FitFetoinfantSurvival()
 # and plots lifetable estimates of fetoinfant survival and mortality
@@ -952,7 +954,7 @@ PlotHazards <-
     
   }
 
-# Birth hump ------------------------------------------------------
+# Birth hump analysis -----------------------------------------------------
 
 # share of feto-infant deaths until x contributed by birth hump
 # component

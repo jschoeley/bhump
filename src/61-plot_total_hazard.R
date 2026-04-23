@@ -1,35 +1,36 @@
 # Plot total hazard with fitted competing risks model
 
-# Init ------------------------------------------------------------
+# Init --------------------------------------------------------------------
 
 library(qs2)
 library(tidyverse)
 
 paths <- list()
 paths$input <- list(
-  fetoinfant_lifetables = 'out/30-fetoinfant_lifetables.qs',
-  competing_risk_model_fits = 'tmp/50-competing_risks_model_fits.qs',
-  figure_specs = 'src/00-figure_specifications.R',
-  config = 'cfg/config.yaml'
+  fetoinfant_lifetables.qs = 'out/30-fetoinfant_lifetables.qs',
+  competing_risk_model_fits.qs = 'tmp/50-competing_risks_model_fits.qs',
+  figure_specs.R = 'src/00-figure_specifications.R',
+  config.yaml = 'cfg/config.yaml'
 )
 paths$output <- list(
-  figures = 'out'
+  overall_hazard_and_fit.qs = 'out/61-overall_hazard_and_fit.qs',
+  overall_hazard_and_fit.svg = 'out/61-overall_hazard_and_fit.svg'
 )
 
 # figure specs
-source(paths$input$figure_specs)
+source(paths$input$figure_specs.R)
 
-config <- yaml::read_yaml(paths$input$config)
+config <- yaml::read_yaml(paths$input$config.yaml)
 
 # constants
 cnst <- list()
 
-# Load data -------------------------------------------------------
+# Input -------------------------------------------------------------------
 
-filt <- qs_read(paths$input$fetoinfant_lifetables)
-fit <- qs_read(paths$input$competing_risk_model_fits)
+filt <- qs_read(paths$input$fetoinfant_lifetables.qs)
+fit <- qs_read(paths$input$competing_risk_model_fits.qs)
 
-# Plot overall hazard ---------------------------------------------
+# Plot overall hazard -----------------------------------------------------
 
 overall_hazard_and_fit <- list()
 overall_hazard_and_fit$data <-
@@ -68,13 +69,12 @@ overall_hazard_and_fit$plot <-
   fig_spec$MyGGplotTheme()
 overall_hazard_and_fit$plot
 
-# Export ----------------------------------------------------------
+# Export ------------------------------------------------------------------
 
-qs_save(overall_hazard_and_fit$data, 'out/61-overall_hazard_and_fit.qs')
-fig_spec$ExportPDF(
+qs_save(overall_hazard_and_fit$data, paths$output$overall_hazard_and_fit.qs)
+fig_spec$ExportSVG(
   overall_hazard_and_fit$plot,
-  '61-overall_hazard_and_fit',
-  'out',
+  paths$output$overall_hazard_and_fit.svg,
   width = fig_spec$width,
   height = fig_spec$width*0.7
 )

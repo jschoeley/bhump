@@ -2,7 +2,7 @@
 # feto-infant mortality trajectory over
 # age of gestation
 
-# Init ------------------------------------------------------------
+# Init --------------------------------------------------------------------
 
 set.seed(1987)
 
@@ -11,24 +11,24 @@ library(tidyverse)
 
 paths <- list()
 paths$input <- list(
-  figure_specs = 'src/00-figure_specifications.R',
-  fetoinfant_lifetables = 'out/30-fetoinfant_lifetables.qs',
-  lifetable_functions = 'src/00-fnct-feto_infant_lt.R',
-  parametric_functions = 'src/00-fnct-parametric_survival_model.R',
-  config = 'cfg/config.yaml'
+  figure_specs.R = 'src/00-figure_specifications.R',
+  fetoinfant_lifetables.qs = 'out/30-fetoinfant_lifetables.qs',
+  lifetable_functions.R = 'src/00-fnct-feto_infant_lt.R',
+  parametric_functions.R = 'src/00-fnct-parametric_survival_model.R',
+  config.yaml = 'cfg/config.yaml'
 )
 paths$output <- list(
-  competing_risk_model_fits = 'tmp/50-competing_risks_model_fits.qs'
+  competing_risk_model_fits.qs = 'tmp/50-competing_risks_model_fits.qs'
 )
 
 # figure specs
-source(paths$input$figure_specs)
+source(paths$input$figure_specs.R)
 # fetoinfant lifetable functions
-source(paths$input$lifetable_functions)
+source(paths$input$lifetable_functions.R)
 # fetoinfant parametric functions
-source(paths$input$parametric_functions)
+source(paths$input$parametric_functions.R)
 
-config <- yaml::read_yaml(paths$input$config)
+config <- yaml::read_yaml(paths$input$config.yaml)
 
 # constants
 cnst <-
@@ -42,12 +42,12 @@ cnst <-
 # model fits
 fit <- list()
 
-# Data ------------------------------------------------------------
+# Data --------------------------------------------------------------------
 
 # a list of feto-infant lifetable as FILT objects
-filt <- qs_read(paths$input$fetoinfant_lifetables)
+filt <- qs_read(paths$input$fetoinfant_lifetables.qs)
 
-# Fit feto-infant survival by social strata -----------------------
+# Fit feto-infant survival by social strata -------------------------------
 
 # total
 fit$total14 <-
@@ -94,131 +94,132 @@ fit$education <-
   )
 PlotHazards(fit$education)
 
-# Fit feto-infant survival by cause of death ----------------------
+# Fit feto-infant survival by cause of death ------------------------------
 
 # by cause of death
-fit$PlacentaCordMembrane <-
+fit$pcm <-
   FitFetoinfantSurvival(
-    filt$PlacentaCordMembrane,
+    filt$pcm,
     control = ControlFitFetoinfantSurvival(hessian_inverse = 'choleskypivot')
   )
-PlotHazards(fit$PlacentaCordMembrane)
+PlotHazards(fit$pcm)
 
-fit$LabourBirth <-
+fit$labor <-
   FitFetoinfantSurvival(
-    filt$LabourBirth,
+    filt$labor,
     control = ControlFitFetoinfantSurvival(hessian_inverse = 'choleskypivot')
   )
-PlotHazards(fit$LabourBirth)
+PlotHazards(fit$labor)
 
-fit$Malformations <-
+fit$congenital <-
   FitFetoinfantSurvival(
-    filt$Malformations,
+    filt$congenital,
     control = ControlFitFetoinfantSurvival(hessian_inverse = 'choleskypivot')
   )
-PlotHazards(fit$Malformations)
+PlotHazards(fit$congenital)
 
-fit$Maternal <-
+fit$maternal <-
   FitFetoinfantSurvival(
-    filt$Maternal,
+    filt$maternal,
     control = ControlFitFetoinfantSurvival(hessian_inverse = 'choleskypivot')
   )
-PlotHazards(fit$Maternal)
+PlotHazards(fit$maternal)
 
-fit$CerebralConvulsions <-
+fit$convulsions <-
   FitFetoinfantSurvival(
-    filt$CerebralConvulsions,
+    filt$convulsions,
     control = ControlFitFetoinfantSurvival(
       zeta_range = c(39, 43)-cnst$left_truncation_gestage,
       hessian_inverse = 'choleskypivot'
     )
   )
-PlotHazards(fit$CerebralConvulsions)
+PlotHazards(fit$convulsions)
 
-fit$Infections <-
+fit$sepsis <-
   FitFetoinfantSurvival(
-    filt$Infections,
+    filt$sepsis,
+    control = ControlFitFetoinfantSurvival(
+      model = 'flexible1',
+      zeta_range = c(41, 44)-cnst$left_truncation_gestage,lambda2 = 1e1,
+      hessian_inverse = 'choleskypivot'
+    )
+  )
+PlotHazards(fit$sepsis)
+
+fit$hypoxia <-
+  FitFetoinfantSurvival(
+    filt$hypoxia,
     control = ControlFitFetoinfantSurvival(
       zeta_range = c(38, 42)-cnst$left_truncation_gestage,
       hessian_inverse = 'choleskypivot'
     )
   )
-PlotHazards(fit$Infections)
+PlotHazards(fit$hypoxia)
 
-fit$HypoxiaAsphyxie <-
+fit$respiratory <-
   FitFetoinfantSurvival(
-    filt$HypoxiaAsphyxie,
-    control = ControlFitFetoinfantSurvival(
-      zeta_range = c(38, 42)-cnst$left_truncation_gestage,
-      hessian_inverse = 'choleskypivot'
-    )
-  )
-PlotHazards(fit$HypoxiaAsphyxie)
-
-fit$RespiratoryCardio <-
-  FitFetoinfantSurvival(
-    filt$RespiratoryCardio,
+    filt$respiratory,
     control = ControlFitFetoinfantSurvival(
       model = 'flexible1',
       zeta_range = c(37, 41)-cnst$left_truncation_gestage,
       hessian_inverse = 'choleskypivot'
     )
   )
-PlotHazards(fit$RespiratoryCardio)
+PlotHazards(fit$respiratory)
 
-fit$FetalGrowthPremature <-
+fit$prematurity <-
   FitFetoinfantSurvival(
-    filt$FetalGrowthPremature,
+    filt$prematurity,
     control = ControlFitFetoinfantSurvival(
-      model = 'flexible1',
+      model = 'flexible1', lambda2 = 1,
+      zeta_range = c(38, 40)-cnst$left_truncation_gestage,
       hessian_inverse = 'choleskypivot'
     )
   )
-PlotHazards(fit$FetalGrowthPremature)
+PlotHazards(fit$prematurity)
 
 # we fit a restricted model without birth hump
-fit$SID <-
+fit$sids <-
   FitFetoinfantSurvival(
-    filt$SID,
+    filt$sids,
     control = ControlFitFetoinfantSurvival(
-      model = 'flexible2',
+      model = 'flexible2', lambda1 = 1e3, lambda2 = 1e1,
       zeta_range = c(40, 45)-cnst$left_truncation_gestage,
       hessian_inverse = 'choleskypivot',
     )
   )
-PlotHazards(fit$SID)
+PlotHazards(fit$sids)
 
-fit$UnspecificStillbirth <-
+fit$unspecific <-
   FitFetoinfantSurvival(
-    filt$UnspecificStillbirth,
+    filt$unspecific,
     control = ControlFitFetoinfantSurvival(
       zeta_range = c(37, 41)-cnst$left_truncation_gestage,
       hessian_inverse = 'choleskypivot'
     )
   )
-PlotHazards(fit$UnspecificStillbirth)
+PlotHazards(fit$unspecific)
 
-fit$Other <-
+fit$otherspecific <-
   FitFetoinfantSurvival(
-    filt$Other,
+    filt$otherspecific,
+    control = ControlFitFetoinfantSurvival(
+      zeta_range = c(39, 41)-cnst$left_truncation_gestage,
+      hessian_inverse = 'choleskypivot'
+    )
+  )
+PlotHazards(fit$otherspecific)
+
+fit$unknown <-
+  FitFetoinfantSurvival(
+    filt$unknown,
     control = ControlFitFetoinfantSurvival(
       zeta_range = c(37, 41)-cnst$left_truncation_gestage,
       hessian_inverse = 'choleskypivot'
     )
   )
-PlotHazards(fit$Other)
+PlotHazards(fit$unknown)
 
-fit$Unknown <-
-  FitFetoinfantSurvival(
-    filt$Unknown,
-    control = ControlFitFetoinfantSurvival(
-      zeta_range = c(37, 41)-cnst$left_truncation_gestage,
-      hessian_inverse = 'choleskypivot'
-    )
-  )
-PlotHazards(fit$Unknown)
+# Export ------------------------------------------------------------------
 
-
-# Export ----------------------------------------------------------
-
-qs_save(fit, paths$output$competing_risk_model_fits)
+qs_save(fit, paths$output$competing_risk_model_fits.qs)

@@ -1,25 +1,28 @@
 # Plot the birth hump component by cause of death
 
-# Init ------------------------------------------------------------
+# Init --------------------------------------------------------------------
 
 library(qs2)
 library(tidyverse)
 
 paths <- list()
 paths$input <- list(
-  lifetables_and_parametric_fits_by_cod =
+  lifetables_and_parametric_fits_by_cod.qs =
     'tmp/51-lifetables_and_parametric_fits_by_cod.qs',
-  figure_specs = 'src/00-figure_specifications.R',
-  config = 'cfg/config.yaml'
+  figure_specs.R = 'src/00-figure_specifications.R',
+  config.yaml = 'cfg/config.yaml'
 )
 paths$output <- list(
-  figures = 'out'
+  birthhump_cod_separate.qs = 'out/60-birthhump_cod_separate.qs',
+  birthhump_cod_separate.svg = 'out/60-birthhump_cod_separate.svg',
+  birthhump_cod_joint.qs = 'out/60-birthhump_cod_joint.qs',
+  birthhump_cod_joint.svg = 'out/60-birthhump_cod_joint.svg'
 )
 
 # figure specs
-source(paths$input$figure_specs)
+source(paths$input$figure_specs.R)
 
-config <- yaml::read_yaml(paths$input$config)
+config <- yaml::read_yaml(paths$input$config.yaml)
 
 # constants
 cnst <-
@@ -30,11 +33,11 @@ cnst <-
     right_censoring_gestage = 77
   )
 
-# Load data -------------------------------------------------------
+# Input -------------------------------------------------------------------
 
-filt_cod <- qs_read(paths$input$lifetables_and_parametric_fits_by_cod)
+filt_cod <- qs_read(paths$input$lifetables_and_parametric_fits_by_cod.qs)
 
-# Plot birth hump composition by COD ------------------------------
+# Plot birth hump composition by COD --------------------------------------
 
 birthhump_cod_joint <- list()
 birthhump_cod_joint$data <-
@@ -49,18 +52,19 @@ birthhump_cod_joint$plot <-
   scale_x_continuous(breaks = c(24, 40, 76)) +
   scale_y_continuous(expand = c(0,0)) +
   fig_spec$MyGGplotTheme(panel_border = FALSE) +
-  labs(y = 'Feto-infant deaths per 100K person-weeks',
+  labs(y = 'Feto-infant deaths per 100k weeks',
        x = 'Week of gestation',
        fill = 'Cause of death') +
   theme(
     legend.position = c(0.7, 0.5),
+    legend.background = element_blank(),
     legend.key.size = unit(0.4, 'cm'),
     legend.text = element_text(size = 6),
     legend.title = element_text(size = 6)
   )
 birthhump_cod_joint
 
-# Separately plot birth hump by cod -------------------------------
+# Separately plot birth hump by cod ---------------------------------------
 
 birthhump_cod_separate <- list()
 birthhump_cod_separate$data <-
@@ -78,29 +82,28 @@ birthhump_cod_separate$plot <-
   scale_fill_manual(values = config$cod_lookup$color) +
   scale_y_continuous(expand = c(0,0)) +
   scale_x_continuous(breaks = c(24, 40, 76)) +
-  facet_wrap(~cod, nrow = 2) +
+  facet_wrap(~cod, ncol = 3) +
   fig_spec$MyGGplotTheme(panel_border = TRUE) +
-  labs(y = 'Feto-infant deaths per 100K person-weeks',
+  labs(y = 'Feto-infant deaths per 100k weeks',
        x = 'Week of gestation',
        fill = 'Cause of death') +
   guides(fill = 'none')
 birthhump_cod_separate$plot
 
-# Export ----------------------------------------------------------
+# Export ------------------------------------------------------------------
 
-qs_save(birthhump_cod_joint$data, 'out/60-birthhump_cod_joint.qs')
+qs_save(birthhump_cod_joint$data, paths$output$birthhump_cod_joint.qs)
 fig_spec$ExportSVG(
   birthhump_cod_joint$plot,
-  'out/60-birthhump_cod_joint.svg',
+  paths$output$birthhump_cod_joint.svg,
   width = fig_spec$width,
   height = fig_spec$width*0.6
 )
 
-qs_save(birthhump_cod_separate$data, 'out/60-birthhump_cod_separate.qs')
-fig_spec$ExportPDF(
+qs_save(birthhump_cod_separate$data, paths$output$birthhump_cod_separate.qs)
+fig_spec$ExportSVG(
   birthhump_cod_separate$plot,
-  '60-birthhump_cod_separate',
-  paths$output$figures,
+  paths$output$birthhump_cod_separate.svg,
   width = fig_spec$width,
-  height = fig_spec$width*0.6
+  height = fig_spec$width*1.4
 )

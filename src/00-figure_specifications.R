@@ -1,13 +1,45 @@
 # Figure specifications
 #
-# 2020-05-15
-#
-# Jonas Schöley
+# Constants, themes, and functions related to figure creation.
 
 # figure specs
 fig_spec <- list()
 
-# ggplot theme ----------------------------------------------------
+# Dimensions --------------------------------------------------------------
+
+# figure width (mm)
+fig_spec$width = 124.6
+
+# figure line and point sizes
+fig_spec$line_size_xs = 0.1
+fig_spec$line_size_s = 0.2
+fig_spec$line_size_m = 0.3
+fig_spec$line_size_l = 0.5
+fig_spec$line_size_xl = 1
+fig_spec$point_size_xs = 0.05
+fig_spec$point_size_s = 0.1
+fig_spec$point_size_m = 0.2
+fig_spec$stroke_size_xs = 0.3
+fig_spec$text_size_s = 2
+fig_spec$text_size_xs = 1.5
+
+# Colors ------------------------------------------------------------------
+
+# color palette
+fig_spec$discrete_colors <-
+  c('#D23737', # red
+    '#3191C9', # blue
+    '#D2BC2D', # yellow
+    '#4EC93B', # green
+    '#881F93', # purple
+    '#C5752B') # orange
+fig_spec$discrete_colors_light <-
+  c('#FCB3B3', # red
+    '#A7DDFC', # blue
+    '#FAEC8E'  # yellow
+  )
+
+# ggplot theme ------------------------------------------------------------
 
 # ggplot theme
 fig_spec$MyGGplotTheme <-
@@ -63,54 +95,7 @@ fig_spec$MyGGplotTheme <-
     )
   }
 
-# Dimensions ------------------------------------------------------
-
-# figure width (mm)
-fig_spec$width = 124.6
-
-# figure line and point sizes
-fig_spec$line_size_xs = 0.1
-fig_spec$line_size_s = 0.2
-fig_spec$line_size_m = 0.3
-fig_spec$line_size_l = 0.5
-fig_spec$line_size_xl = 1
-fig_spec$point_size_xs = 0.05
-fig_spec$point_size_s = 0.1
-fig_spec$point_size_m = 0.2
-fig_spec$stroke_size_xs = 0.3
-fig_spec$text_size_s = 2
-fig_spec$text_size_xs = 1.5
-
-# Colors ----------------------------------------------------------
-
-# color palette
-fig_spec$discrete_colors <-
-  c('#D23737', # red
-    '#3191C9', # blue
-    '#D2BC2D', # yellow
-    '#4EC93B', # green
-    '#881F93', # purple
-    '#C5752B') # orange
-fig_spec$discrete_colors_light <-
-  c('#FCB3B3', # red
-    '#A7DDFC', # blue
-    '#FAEC8E'  # yellow
-    )
-
-# Export function -------------------------------------------------
-
-fig_spec$ExportPDF <-
-  function (figure, filename, path, ...) {
-    ggsave(
-      filename = paste0(filename, '.pdf'),
-      plot = figure,
-      path = path,
-      units = 'mm',
-      dpi = 300,
-      useDingbats = FALSE,
-      ...
-    )
-  }
+# Export functions --------------------------------------------------------
 
 fig_spec$ExportSVG <- function (
     figure,

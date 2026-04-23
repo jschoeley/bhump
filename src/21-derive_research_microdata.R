@@ -1,7 +1,7 @@
 # Derive microdata in event-history format for analysis of
 # fetal-infant transition
 
-# Init ------------------------------------------------------------
+# Init --------------------------------------------------------------------
 
 library(qs2)
 library(readr)
@@ -14,11 +14,11 @@ setDTthreads(0)
 
 paths <- list()
 paths$input <- list(
-  fetoinfant = 'tmp/20-fetoinfant.qs',
-  cod = 'dat/10-cod-list/cod_04_17.csv'
+  fetoinfant.qs = 'tmp/20-fetoinfant.qs',
+  cod.csv = 'dat/10-cod-list/cod.csv'
 )
 paths$output <- list(
-  fetoinfant = 'tmp/21-fetoinfant.qs'
+  fetoinfant.qs = 'tmp/21-fetoinfant.qs'
 )
 
 # constants
@@ -28,13 +28,13 @@ cnst <-
     right_censoring_gestage = 76.99
   )
 
-# Load data -------------------------------------------------------
+# Load data ---------------------------------------------------------------
 
 # US fetal- infant deaths and births individual level data
-fetoinfant <- qs_read(paths$input$fetoinfant)
+fetoinfant <- qs_read(paths$input$fetoinfant.qs)
 setDT(fetoinfant)
 
-# Subset ----------------------------------------------------------
+# Subset ------------------------------------------------------------------
 
 # only consider cases which survived to
 # week 24, i.e. were delivered (alive or dead)
@@ -57,7 +57,7 @@ fetoinfant <-
 
 #fetoinfant[, .(count = .N), by = date_of_delivery_y]
 
-# Calculate date of conception ------------------------------------
+# Calculate date of conception --------------------------------------------
 
 # calculate date of conception as
 # date of delivery - (weeks of gestation at delivery - 2 weeks)
@@ -91,27 +91,27 @@ fetoinfant <-
   ]
 
 # delete space after icd code
-fetoinfant[, cod_icd10 := gsub(" ", "", cod_icd10)]
+fetoinfant[, cod_icd10 := gsub(' ', '', cod_icd10)]
 
 #fetoinfant[, .(count = .N), by = date_of_conception_y]
 dcast(
   fetoinfant[, .(count = .N),
              by = .(date_of_conception_y, date_of_delivery_y, type)],
   date_of_conception_y + date_of_delivery_y ~ type,
-  value.var = "count"
+  value.var = 'count'
 )
 
-# Recode cause of death categories --------------------------------
+# Recode cause of death categories ----------------------------------------
 
 # load mapping between cod categories and icd-10 codes
-cod_codes <- read_csv(paths$input$cod)
+cod_codes <- read_csv(paths$input$cod.csv)
 cod_codes <- as.data.table(cod_codes)
 # select relevant cod coding here
-cod_codes <- cod_codes[,.(cod_icd10, cod_cat = cod_cat_4)]
+cod_codes <- cod_codes[,.(cod_icd10, cod_cat = cod_cat)]
 
 # add cod categories to data
 fetoinfant <-
-  merge(fetoinfant, cod_codes, by = "cod_icd10", all.x = TRUE)
+  merge(fetoinfant, cod_codes, by = 'cod_icd10', all.x = TRUE)
 
 # define special mappings
 fetoinfant[
@@ -119,18 +119,18 @@ fetoinfant[
   cod_cat := fcase(
     # prematurity only if gestation at birth was early
     (startsWith(cod_icd10, c('P22', 'P26', 'P27', 'P28')) &
-       gestation_at_delivery_w >= 37), 'Other',
+       gestation_at_delivery_w >= 37), 'otherspecific',
     # code explicit COD NAs for fetal death
-    (type == 'fetus' & (cod_icd10 == '' | is.na(cod_icd10))), 'Unknown',
+    (type == 'fetus' & (cod_icd10 == '' | is.na(cod_icd10))), 'unknown',
     # code explicit COD NAs for infant deaths
-    (type == 'infant' & !is.na(age_at_death_d) & (cod_icd10 == '' | is.na(cod_icd10))), 'Unknown',
+    (type == 'infant' & !is.na(age_at_death_d) & (cod_icd10 == '' | is.na(cod_icd10))), 'unknown',
     # defaults
     !(cod_icd10 == '' | is.na(cod_icd10)), cod_cat,
     default = NA
   )
 ]
 
-# Add flags for vital events --------------------------------------
+# Add flags for vital events ----------------------------------------------
 
 # add flags for vital events fetal-death, life-birth,
 # neonatal and post-neonatal death and survival
@@ -165,7 +165,7 @@ fetoinfant[
   )
 ]
 
-# Add timing of vital events --------------------------------------
+# Add timing of vital events ----------------------------------------------
 
 # assume uniform distribution of events over week of
 # gestation for fetal deaths and life-births
@@ -248,7 +248,7 @@ fetoinfant <-
             cod_cat
           )]
 
-# Convert data to event-history format ----------------------------
+# Convert data to event-history format ------------------------------------
 
 # population strata
 strata <-
@@ -259,7 +259,7 @@ strata <-
     'date_of_conception_y'
   )
 
-# Fetal death event histories -------------------------------------
+# Fetal death event histories ---------------------------------------------
 
 # fetal death event histories
 # fetus -> death
@@ -276,7 +276,7 @@ fetal_deaths_histories <-
     )
   )
 
-# Neonatal death event histories ----------------------------------
+# Neonatal death event histories ------------------------------------------
 
 # neonatal death event histories
 neonatal_deaths <- fetoinfant[neonatal_death == TRUE]
@@ -313,7 +313,7 @@ neonatal_deaths_histories <-
     neonatal_deaths_histories
   )
 
-# Postneonatal death event histories ------------------------------
+# Postneonatal death event histories --------------------------------------
 
 # postneonatal death event histories
 # fetus -> neonatal -> postneonatal -> (death|censored)
@@ -371,7 +371,7 @@ postneonatal_deaths_histories <-
     postneonatal_deaths_histories
   )
 
-# Postneonatal survivor event histories ---------------------------
+# Postneonatal survivor event histories -----------------------------------
 
 # infant survivor event histories
 # fetus -> neonatal -> postneonatal -> censored
@@ -410,7 +410,7 @@ postneonatal_survivors_histories <-
     postneonatal_survivors_histories
   )
 
-# Complete feto-infant event histories ----------------------------
+# Complete feto-infant event histories ------------------------------------
 
 # event histories for each subject during
 # the feto-infant period
@@ -424,7 +424,7 @@ fetoinfant_event_histories <-
 fetoinfant_event_histories <-
   fetoinfant_event_histories[order(id)]
 
-# Consistency checks --------------------------------------------
+# Consistency checks ------------------------------------------------------
 
 # cohort size matches
 stopifnot(
@@ -483,10 +483,10 @@ stopifnot(
     all(unique(fetoinfant$cod_icd10) %in% cod_codes$cod_icd10)
 )
 
-# Export ----------------------------------------------------------
+# Export ------------------------------------------------------------------
 
 # save the processed microdata
 qs_save(
   fetoinfant_event_histories,
-  file = paths$output$fetoinfant
+  file = paths$output$fetoinfant.qs
 )

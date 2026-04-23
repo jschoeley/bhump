@@ -1,4 +1,6 @@
-# Event-Exposure aggregator ---------------------------------------
+# Functions to create feto-infant life tables
+
+# Event-Exposure aggregator -----------------------------------------------
 
 # general function to aggregate multistate transitions
 # and exposures within age groups
@@ -241,8 +243,7 @@ AggregateStateTransitions <- function (
 
 }
 
-
-# Rates and standard errors ---------------------------------------
+# Rates and standard errors -----------------------------------------------
 
 # occurence exposure rate that returns 0 when
 # exposure is 0
@@ -257,7 +258,7 @@ StdErrRate <- function (events, exposures) {
   ifelse(is.nan(se), 0, se)
 }
 
-# FILT (Feto-infant lifetable) object -----------------------------
+# Feto-infant life table object (FILT) ------------------------------------
 
 # Calculate a fetoinfant lifetable (FILT) across strata
 # Constructs a FILT object
@@ -379,8 +380,7 @@ FILT <-
     
   }
 
-# FILT methods ----------------------------------------------------
-
+# FILT methods ------------------------------------------------------------
 
 FILTCohortSize <- function (filt) {
   filt %>%

@@ -8,26 +8,26 @@
 # to differences in the fitted model parameters, distinguishing between
 # level, ontogenescent (slope), and birth-hump contributions.
 
-# Init ------------------------------------------------------------
+# Init --------------------------------------------------------------------
 
 library(tidyverse)
 library(qs2)
 
 paths <- list()
 paths$input <- list(
-  competing_risk_model_fits = 'tmp/50-competing_risks_model_fits.qs',
-  parametric_functions = 'src/00-fnct-parametric_survival_model.R',
-  config = 'cfg/config.yaml'
+  competing_risk_model_fits.qs = 'tmp/50-competing_risks_model_fits.qs',
+  parametric_functions.R = 'src/00-fnct-parametric_survival_model.R',
+  config.yaml = 'cfg/config.yaml'
 )
 paths$output <- list(
-  parametric_decompositions =
+  parametric_decompositions.qs =
     'out/54-parametric_decompositions.qs'
 )
 
-config <- yaml::read_yaml(paths$input$config)
+config <- yaml::read_yaml(paths$input$config.yaml)
 
 # fetoinfant parametric functions
-source(paths$input$parametric_functions)
+source(paths$input$parametric_functions.R)
 
 # constants
 cnst <-
@@ -35,12 +35,12 @@ cnst <-
     cod = config$cod_lookup$key
   )
 
-# Load data -------------------------------------------------------
+# Load data ---------------------------------------------------------------
 
 # a list of feto-infant lifetable as FILT objects
-fit <- qs_read(paths$input$competing_risk_model_fits)
+fit <- qs_read(paths$input$competing_risk_model_fits.qs)
 
-# Parametric decomposition of mortality differences -------------
+# Parametric decomposition of mortality differences -----------------------
 
 DecomposeFetoInfantDeaths <-
   function (filt_fit, pop1, pop2) {
@@ -205,6 +205,6 @@ decomp$origin$black_hispanic <-
 decomp$education$primary_academic <-
   DecomposeFetoInfantDeaths(fit$education, `Primary`, `Bachelor, Master, Doctorate`)
 
-# Export ----------------------------------------------------------
+# Export ------------------------------------------------------------------
 
-qs_save(decomp, paths$output$parametric_decompositions)
+qs_save(decomp, paths$output$parametric_decompositions.qs)

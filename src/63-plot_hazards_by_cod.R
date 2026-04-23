@@ -1,37 +1,38 @@
 # Plot hazards over population strata
 
-# Init ------------------------------------------------------------
+# Init --------------------------------------------------------------------
 
 library(qs2)
 library(tidyverse)
 
 paths <- list()
 paths$input <- list(
-  lifetables_and_parametric_fits_by_cod =
+  lifetables_and_parametric_fits_by_cod.qs =
     'tmp/51-lifetables_and_parametric_fits_by_cod.qs',
-  competing_risks_statistics =
+  competing_risks_statistics.qs =
     'out/53-competing_risks_statistics.qs',
-  figure_specs = 'src/00-figure_specifications.R',
-  config = 'cfg/config.yaml'
+  figure_specs.R = 'src/00-figure_specifications.R',
+  config.yaml = 'cfg/config.yaml'
 )
 paths$output <- list(
-  figures = 'out'
+  hazards_by_cod.svg = 'out/63-hazards_by_cod.svg',
+  hazards_by_cod.qs = 'out/63-hazards_by_cod.qs'
 )
 
 # figure specs
-source(paths$input$figure_specs)
+source(paths$input$figure_specs.R)
 
-config <- yaml::read_yaml(paths$input$config)
+config <- yaml::read_yaml(paths$input$config.yaml)
 
 # constants
 cnst <- list()
 
-# Load data -------------------------------------------------------
+# Load data ---------------------------------------------------------------
 
-filt_cod <- qs_read(paths$input$lifetables_and_parametric_fits_by_cod)
-cr <- qs_read(paths$input$competing_risks_statistics)
+filt_cod <- qs_read(paths$input$lifetables_and_parametric_fits_by_cod.qs)
+cr <- qs_read(paths$input$competing_risks_statistics.qs)
 
-# Plot hazards by COD ---------------------------------------------
+# Plot hazards by cod -----------------------------------------------------
 
 hazards_by_cod <- list()
 
@@ -91,12 +92,12 @@ hazards_by_cod$plot <-
   )
 hazards_by_cod$plot
 
-# Export ----------------------------------------------------------
+# Export ------------------------------------------------------------------
 
-qs_save(hazards_by_cod$data, 'out/63-hazards_by_cod.qs')
+qs_save(hazards_by_cod$data, paths$output$hazards_by_cod.qs)
 fig_spec$ExportSVG(
   hazards_by_cod$plot,
-  'out/63-hazards_by_cod.svg',
+  paths$output$hazards_by_cod.svg,
   width = fig_spec$width,
   height = 1.2*fig_spec$width
 )

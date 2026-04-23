@@ -1,26 +1,27 @@
 # Plot hazards over population strata
 
-# Init ------------------------------------------------------------
+# Init --------------------------------------------------------------------
 
 library(qs2)
 library(tidyverse)
 
 paths <- list()
 paths$input <- list(
-  competing_risk_model_fits = 'tmp/50-competing_risks_model_fits.qs',
-  figure_specs = 'src/00-figure_specifications.R',
-  parametric_functions = 'src/00-fnct-parametric_survival_model.R',
-  config = 'cfg/config.yaml'
+  competing_risk_model_fits.qs = 'tmp/50-competing_risks_model_fits.qs',
+  figure_specs.R = 'src/00-figure_specifications.R',
+  parametric_functions.R = 'src/00-fnct-parametric_survival_model.R',
+  config.yaml = 'cfg/config.yaml'
 )
 paths$output <- list(
-  figures = 'out'
+  hazards_by_social_strata.qs = 'out/62-hazards_by_social_strata.qs',
+  hazards_by_social_strata.svg = 'out/62-hazards_by_social_strata.svg'
 )
 
 # figure specs
-source(paths$input$figure_specs)
-source(paths$input$parametric_functions)
+source(paths$input$figure_specs.R)
+source(paths$input$parametric_functions.R)
 
-config <- yaml::read_yaml(paths$input$config)
+config <- yaml::read_yaml(paths$input$config.yaml)
 
 # constants
 cnst <-
@@ -31,11 +32,11 @@ cnst <-
     right_censoring_gestage = 77
   )
 
-# Load data -------------------------------------------------------
+# Input -------------------------------------------------------------------
 
-fit <- qs_read(paths$input$competing_risk_model_fits)
+fit <- qs_read(paths$input$competing_risk_model_fits.qs)
 
-# Plot hazards by social strata -----------------------------------
+# Plot hazards by social strata -------------------------------------------
 
 hazards_by_social_strata <- list()
 
@@ -80,13 +81,12 @@ hazards_by_social_strata$plot <- cowplot::plot_grid(
 )
 hazards_by_social_strata$plot
 
-# Export ----------------------------------------------------------
+# Export ------------------------------------------------------------------
 
-qs_save(hazards_by_social_strata$data, 'out/62-hazards_by_social_strata.qs')
-fig_spec$ExportPDF(
+qs_save(hazards_by_social_strata$data, paths$output$hazards_by_social_strata.qs)
+fig_spec$ExportSVG(
   hazards_by_social_strata$plot,
-  filename = '62-hazards_by_social_strata',
-  path = 'out',
+  paths$output$hazards_by_social_strata.svg,
   width = fig_spec$width,
   height = fig_spec$width*1.4
 )
