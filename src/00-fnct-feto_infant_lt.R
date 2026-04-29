@@ -393,6 +393,20 @@ FILTCohortSizeTotal <- function (filt) {
     pull(N) %>% sum()
 }
 
+FILTTransitionsStratifiedTotal <- function (filt) {
+  filt %>%
+    group_by(stratum) %>%
+    summarise(
+      D_F = sum(D_F),
+      D_N = sum(D_N),
+      D_P = sum(D_P),
+      D_I = D_N + D_P,
+      D = sum(D),
+      B = sum(B),
+      C = sum(C)
+    )
+}
+
 FILTTransitions <- function (filt) {
   filt %>%
     group_by(x) %>%
