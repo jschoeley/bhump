@@ -2,6 +2,8 @@
 
 # Init --------------------------------------------------------------------
 
+here::i_am('src/52-parameter_tables.R'); setwd(here::here())
+
 library(qs2)
 library(tidyverse)
 

@@ -2,6 +2,8 @@
 
 # Init --------------------------------------------------------------------
 
+here::i_am('src/61-plot_total_hazard.R'); setwd(here::here())
+
 library(qs2)
 library(tidyverse)
 

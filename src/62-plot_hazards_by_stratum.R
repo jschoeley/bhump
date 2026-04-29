@@ -2,6 +2,8 @@
 
 # Init --------------------------------------------------------------------
 
+here::i_am('src/62-plot_hazards_by_stratum.R'); setwd(here::here())
+
 library(qs2)
 library(tidyverse)
 

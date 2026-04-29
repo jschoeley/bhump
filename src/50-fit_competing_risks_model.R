@@ -4,6 +4,8 @@
 
 # Init --------------------------------------------------------------------
 
+here::i_am('src/50-fit_competing_risks_model.R'); setwd(here::here())
+
 set.seed(1987)
 
 library(qs2)
@@ -204,6 +206,7 @@ fit$otherspecific <-
   FitFetoinfantSurvival(
     filt$otherspecific,
     control = ControlFitFetoinfantSurvival(
+      model = 'flexible1', lambda2 = 10,
       zeta_range = c(39, 41)-cnst$left_truncation_gestage,
       hessian_inverse = 'choleskypivot'
     )

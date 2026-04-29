@@ -6,6 +6,8 @@
 
 # Init --------------------------------------------------------------------
 
+here::i_am('src/20-prepare_us_fetoinfants.R'); setwd(here::here())
+
 library(yaml); library(dplyr)
 library(qs2)
 

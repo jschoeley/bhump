@@ -2,6 +2,8 @@
 
 # Init --------------------------------------------------------------------
 
+here::i_am('src/30-fetoinfant_life_table_aggregation.R'); setwd(here::here())
+
 library(qs2)
 library(tidyverse)
 library(yaml)

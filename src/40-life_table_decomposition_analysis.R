@@ -2,6 +2,8 @@
 
 # Init --------------------------------------------------------------------
 
+here::i_am('src/40-life_table_decomposition_analysis.R'); setwd(here::here())
+
 library(qs2)
 library(tidyverse)
 

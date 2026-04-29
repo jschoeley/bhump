@@ -2,6 +2,8 @@
 
 # Init --------------------------------------------------------------------
 
+here::i_am('src/53-competing_risks_inference.R'); setwd(here::here())
+
 library(qs2)
 library(tidyverse)
 
@@ -56,21 +58,21 @@ tab$rho <- list(
 
 # by cause of death
 tab$rho_by_cod <- list(
-  BirthHumpDeaths(fit$pcm, x = cnst$right_censoring_gestage),
-  BirthHumpDeaths(fit$labor, x = cnst$right_censoring_gestage),
-  BirthHumpDeaths(fit$congenital, x = cnst$right_censoring_gestage),
-  BirthHumpDeaths(fit$maternal, x = cnst$right_censoring_gestage),
-  BirthHumpDeaths(fit$convulsions, x = cnst$right_censoring_gestage),
-  BirthHumpDeaths(fit$sepsis, x = cnst$right_censoring_gestage),
-  BirthHumpDeaths(fit$hypoxia, x = cnst$right_censoring_gestage),
-  BirthHumpDeaths(fit$respiratory, x = cnst$right_censoring_gestage),
-  BirthHumpDeaths(fit$prematurity, x = cnst$right_censoring_gestage),
-  BirthHumpDeaths(fit$sids, x = cnst$right_censoring_gestage),
-  BirthHumpDeaths(fit$unspecific, x = cnst$right_censoring_gestage),
-  BirthHumpDeaths(fit$otherspecific, x = cnst$right_censoring_gestage),
-  BirthHumpDeaths(fit$unknown, x = cnst$right_censoring_gestage)
+  pcm = BirthHumpDeaths(fit$pcm, x = cnst$right_censoring_gestage),
+  labor = BirthHumpDeaths(fit$labor, x = cnst$right_censoring_gestage),
+  congenital = BirthHumpDeaths(fit$congenital, x = cnst$right_censoring_gestage),
+  maternal = BirthHumpDeaths(fit$maternal, x = cnst$right_censoring_gestage),
+  convulsions = BirthHumpDeaths(fit$convulsions, x = cnst$right_censoring_gestage),
+  sepsis = BirthHumpDeaths(fit$sepsis, x = cnst$right_censoring_gestage),
+  hypoxia = BirthHumpDeaths(fit$hypoxia, x = cnst$right_censoring_gestage),
+  respiratory = BirthHumpDeaths(fit$respiratory, x = cnst$right_censoring_gestage),
+  prematurity = BirthHumpDeaths(fit$prematurity, x = cnst$right_censoring_gestage),
+  sids = BirthHumpDeaths(fit$sids, x = cnst$right_censoring_gestage),
+  otherspecific = BirthHumpDeaths(fit$otherspecific, x = cnst$right_censoring_gestage),
+  unspecific = BirthHumpDeaths(fit$unspecific, x = cnst$right_censoring_gestage),
+  unknown = BirthHumpDeaths(fit$unknown, x = cnst$right_censoring_gestage)
 )
-names(tab$rho_by_cod) <- config$cod_lookup$key
+tab$rho_by_cod <- tab$rho_by_cod[config$cod_lookup$key]
 tab$rho_by_cod <- bind_rows(tab$rho_by_cod, .id = 'cod')
 
 # Probability of Fetoinfant death -----------------------------------------
@@ -91,21 +93,21 @@ tab$Fx_by_stratum <- list(
 
 # by cause of death
 tab$Fx_by_cod <- list(
-  ProbFetoInfantDeath(fit$pcm, x = cnst$right_censoring_gestage),
-  ProbFetoInfantDeath(fit$labor, x = cnst$right_censoring_gestage),
-  ProbFetoInfantDeath(fit$congenital, x = cnst$right_censoring_gestage),
-  ProbFetoInfantDeath(fit$maternal, x = cnst$right_censoring_gestage),
-  ProbFetoInfantDeath(fit$convulsions, x = cnst$right_censoring_gestage),
-  ProbFetoInfantDeath(fit$sepsis, x = cnst$right_censoring_gestage),
-  ProbFetoInfantDeath(fit$hypoxia, x = cnst$right_censoring_gestage),
-  ProbFetoInfantDeath(fit$respiratory, x = cnst$right_censoring_gestage),
-  ProbFetoInfantDeath(fit$prematurity, x = cnst$right_censoring_gestage),
-  ProbFetoInfantDeath(fit$sids, x = cnst$right_censoring_gestage),
-  ProbFetoInfantDeath(fit$unspecific, x = cnst$right_censoring_gestage),
-  ProbFetoInfantDeath(fit$otherspecific, x = cnst$right_censoring_gestage),
-  ProbFetoInfantDeath(fit$unknown, x = cnst$right_censoring_gestage)
+  pcm = ProbFetoInfantDeath(fit$pcm, x = cnst$right_censoring_gestage),
+  labor = ProbFetoInfantDeath(fit$labor, x = cnst$right_censoring_gestage),
+  congenital = ProbFetoInfantDeath(fit$congenital, x = cnst$right_censoring_gestage),
+  maternal = ProbFetoInfantDeath(fit$maternal, x = cnst$right_censoring_gestage),
+  convulsions = ProbFetoInfantDeath(fit$convulsions, x = cnst$right_censoring_gestage),
+  sepsis = ProbFetoInfantDeath(fit$sepsis, x = cnst$right_censoring_gestage),
+  hypoxia = ProbFetoInfantDeath(fit$hypoxia, x = cnst$right_censoring_gestage),
+  respiratory = ProbFetoInfantDeath(fit$respiratory, x = cnst$right_censoring_gestage),
+  prematurity = ProbFetoInfantDeath(fit$prematurity, x = cnst$right_censoring_gestage),
+  sids = ProbFetoInfantDeath(fit$sids, x = cnst$right_censoring_gestage),
+  otherspecific = ProbFetoInfantDeath(fit$otherspecific, x = cnst$right_censoring_gestage),
+  unspecific = ProbFetoInfantDeath(fit$unspecific, x = cnst$right_censoring_gestage),
+  unknown = ProbFetoInfantDeath(fit$unknown, x = cnst$right_censoring_gestage)
 )
-names(tab$Fx_by_cod) <- config$cod_lookup$key
+tab$Fx_by_cod <- tab$Fx_by_cod[config$cod_lookup$key]
 tab$Fx_by_cod <- bind_rows(tab$Fx_by_cod, .id = 'cod')
 
 # COD composition of birth hump -------------------------------------------
@@ -126,7 +128,6 @@ tab$bhump_by_cod <-
     levels = config$cod_lookup$key,
     labels = config$cod_lookup$shortlabel
   )) |>
-  #arrange(-p_birth) %>%
   select(cod, p_birth, p_ontogen, p_total)
 
 # Export ------------------------------------------------------------------

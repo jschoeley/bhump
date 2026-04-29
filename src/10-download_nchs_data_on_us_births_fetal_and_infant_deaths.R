@@ -7,7 +7,8 @@ library(yaml)
 # Constants ---------------------------------------------------------------
 
 # input and output paths
-setwd('.')
+here::i_am('src/10-download_nchs_data_on_us_births_fetal_and_infant_deaths.R'); setwd(here::here())
+
 paths <- list()
 paths$input <- list(
   codebook_infant = 'cfg/codebook-us_cohort_infant_births_deaths_minimal.yaml',

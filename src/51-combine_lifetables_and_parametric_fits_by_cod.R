@@ -2,6 +2,8 @@
 
 # Init --------------------------------------------------------------------
 
+here::i_am('src/51-combine_lifetables_and_parametric_fits_by_cod.R'); setwd(here::here())
+
 library(qs2)
 library(tidyverse)
 

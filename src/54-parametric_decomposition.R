@@ -10,6 +10,8 @@
 
 # Init --------------------------------------------------------------------
 
+here::i_am('src/54-parametric_decomposition.R'); setwd(here::here())
+
 library(tidyverse)
 library(qs2)
 

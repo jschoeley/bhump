@@ -2,6 +2,8 @@
 
 # Init --------------------------------------------------------------------
 
+here::i_am('src/63-plot_hazards_by_cod.R'); setwd(here::here())
+
 library(qs2)
 library(tidyverse)
 
@@ -39,15 +41,15 @@ hazards_by_cod <- list()
 hazards_by_cod$data <- list(
   hazards = mutate(
     filt_cod,
-    cod = factor(cod, config$cod_lookup$label, config$cod_lookup$label)
+    cod = factor(cod, config$cod_lookup$label, config$cod_lookup$shortlabel)
   ),
   rho_by_cod = mutate(
     cr$rho_by_cod,
-    cod = factor(cod, config$cod_lookup$key, config$cod_lookup$label)
+    cod = factor(cod, config$cod_lookup$key, config$cod_lookup$shortlabel)
   ),
   Fx_by_cod = mutate(
     cr$Fx_by_cod,
-    cod = factor(cod, config$cod_lookup$key, config$cod_lookup$label)
+    cod = factor(cod, config$cod_lookup$key, config$cod_lookup$shortlabel)
   )
 )
 
@@ -80,7 +82,7 @@ hazards_by_cod$plot <-
   scale_x_continuous(breaks = c(24, 40, 76)) +
   facet_wrap(~cod, ncol = 3) +
   fig_spec$MyGGplotTheme(panel_border = TRUE) +
-  labs(y = 'Feto-infant deaths per 100,000 weeks exposure',
+  labs(y = 'Feto-infant deaths per 100,000 weeks at risk',
        x = 'Week of gestation',
        fill = 'Cause of death') +
   guides(color = 'none') +

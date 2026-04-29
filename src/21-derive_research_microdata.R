@@ -3,6 +3,8 @@
 
 # Init --------------------------------------------------------------------
 
+here::i_am('src/21-derive_research_microdata.R'); setwd(here::here())
+
 library(qs2)
 library(readr)
 library(data.table)

@@ -2,6 +2,8 @@
 
 # Init --------------------------------------------------------------------
 
+here::i_am('src/56-mortality_compression.R'); setwd(here::here())
+
 library(qs2)
 library(tidyverse)
 

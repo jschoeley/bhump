@@ -2,6 +2,8 @@
 
 # Init --------------------------------------------------------------------
 
+here::i_am('src/60-plot_birthhump_by_cod.R'); setwd(here::here())
+
 library(qs2)
 library(tidyverse)
 
@@ -52,7 +54,7 @@ birthhump_cod_joint$plot <-
   scale_x_continuous(breaks = c(24, 40, 76)) +
   scale_y_continuous(expand = c(0,0)) +
   fig_spec$MyGGplotTheme(panel_border = FALSE) +
-  labs(y = 'Feto-infant deaths per 100k weeks',
+  labs(y = 'Feto-infant deaths per 100,000 weeks at risk',
        x = 'Week of gestation',
        fill = 'Cause of death') +
   theme(
@@ -71,7 +73,7 @@ birthhump_cod_separate$data <-
   filt_cod |>
   select(cod, x, avg_birth_hx) |>
   mutate(
-    cod = factor(cod, config$cod_lookup$label, config$cod_lookup$label)
+    cod = factor(cod, config$cod_lookup$label, config$cod_lookup$shortlabel)
   )# |>
   #filter(!cod %in% c('Prematurity', 'Accidents and violence', 'Sudden Infant Death'))
 
@@ -84,7 +86,7 @@ birthhump_cod_separate$plot <-
   scale_x_continuous(breaks = c(24, 40, 76)) +
   facet_wrap(~cod, ncol = 3) +
   fig_spec$MyGGplotTheme(panel_border = TRUE) +
-  labs(y = 'Feto-infant deaths per 100k weeks',
+  labs(y = 'Feto-infant deaths per 100,000 weeks at risk',
        x = 'Week of gestation',
        fill = 'Cause of death') +
   guides(fill = 'none')
