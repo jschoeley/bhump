@@ -92,7 +92,6 @@ hazards_by_cod$plot <-
     lty = 3,
     size = fig_spec$line_size_m
   )
-hazards_by_cod$plot
 
 # Export ------------------------------------------------------------------
 
