@@ -16,17 +16,22 @@ TMP_OUTPUTS := \
 	$(TMP_DIR)/21-fetoinfant.qs \
 	$(TMP_DIR)/50-competing_risks_model_fits.qs \
 	$(TMP_DIR)/51-lifetables_and_parametric_fits_by_cod.qs \
-	$(TMP_DIR)/52-competing_risk_model_parameter_tables.qs \
+	$(TMP_DIR)/52-codpara.qs \
+	$(TMP_DIR)/52-stratapara.qs \
 	$(TMP_DIR)/total_vs_cod_hazard_alignment_check.svg \
 	$(DOWNLOAD_STAMP)
 
 OUT_OUTPUTS := \
 	$(OUT_DIR)/30-fetoinfant_lifetables.qs \
 	$(OUT_DIR)/31-descriptives.csv \
+	$(OUT_DIR)/31-descriptives.tex \
 	$(OUT_DIR)/40-lifetable_decomposition.qs \
 	$(OUT_DIR)/40-gestational_age_pattern.svg \
 	$(OUT_DIR)/40-perinatal_popdynamics.svg \
-	$(OUT_DIR)/52-partab_strata.csv \
+	$(OUT_DIR)/52-stratapara.csv \
+	$(OUT_DIR)/52-stratapara.tex \
+	$(OUT_DIR)/52-codpara.csv \
+	$(OUT_DIR)/52-codpara.tex \
 	$(OUT_DIR)/53-competing_risks_statistics.qs \
 	$(OUT_DIR)/53-bhump_by_cod.csv \
 	$(OUT_DIR)/54-parametric_decompositions.qs \
@@ -93,7 +98,8 @@ $(OUT_DIR)/30-fetoinfant_lifetables.qs: \
 	$(CFG_DIR)/config.yaml | $(OUT_DIR)
 	$(R) $<
 	
-$(OUT_DIR)/31-descriptives.csv: \
+$(OUT_DIR)/31-descriptives.csv \
+$(OUT_DIR)/31-descriptives.tex &: \
 	$(SRC_DIR)/31-descriptive_tables.R \
 	$(OUT_DIR)/30-fetoinfant_lifetables.qs \
 	$(SRC_DIR)/00-fnct-feto_infant_lt.R \
@@ -126,8 +132,12 @@ $(TMP_DIR)/total_vs_cod_hazard_alignment_check.svg &: \
 	$(CFG_DIR)/config.yaml | $(TMP_DIR)
 	$(R) $<
 
-$(TMP_DIR)/52-competing_risk_model_parameter_tables.qs \
-$(OUT_DIR)/52-partab_strata.csv &: \
+$(TMP_DIR)/52-stratapara.qs \
+$(OUT_DIR)/52-stratapara.csv \
+$(OUT_DIR)/52-stratapara.tex \
+$(TMP_DIR)/52-codpara.qs \
+$(OUT_DIR)/52-codpara.csv \
+$(OUT_DIR)/52-codpara.tex &: \
 	$(SRC_DIR)/52-parameter_tables.R \
 	$(TMP_DIR)/50-competing_risks_model_fits.qs \
 	$(CFG_DIR)/config.yaml | $(TMP_DIR) $(OUT_DIR)

@@ -6,6 +6,7 @@ here::i_am('src/52-parameter_tables.R'); setwd(here::here())
 
 library(qs2)
 library(tidyverse)
+library(gt)
 
 paths <- list()
 paths$input <- list(
@@ -13,14 +14,15 @@ paths$input <- list(
   competing_risk_model_fits.qs = 'tmp/50-competing_risks_model_fits.qs'
 )
 paths$output <- list(
-  competing_risk_model_parameter_tables.qs = 'tmp/52-competing_risks_model_parameter_tables.qs',
-  partab_strata.csv = 'out/52-partab_strata.csv'
+  stratapara.qs = 'tmp/52-stratapara.qs',
+  stratapara.csv = 'out/52-stratapara.csv',
+  stratapara.tex = 'out/52-stratapara.tex',
+  codpara.qs = 'tmp/52-codpara.qs',
+  codpara.csv = 'out/52-codpara.csv',
+  codpara.tex = 'out/52-codpara.tex'
 )
 
 config <- yaml::read_yaml(paths$input$config.yaml)
-
-# parameter tables
-partab <- list()
 
 # Load data ---------------------------------------------------------------
 
@@ -49,37 +51,84 @@ PrintParameterTable <- function (filt_fit) {
   
 }
 
+# Parameter tables across population strata -------------------------------
+
+stratapara <- list()
+
+# total
+stratapara$total <- PrintParameterTable(fit$total14)
 # by sex
-partab$sex <- PrintParameterTable(fit$sex)
+stratapara$sex <- PrintParameterTable(fit$sex)
 # by cohort
-partab$cohort <- PrintParameterTable(fit$cohort)
+stratapara$cohort <- PrintParameterTable(fit$cohort)
 # by age
-partab$origin <- PrintParameterTable(fit$origin)
+stratapara$origin <- PrintParameterTable(fit$origin)
 # by education
-partab$education <- PrintParameterTable(fit$education)
+stratapara$education <- PrintParameterTable(fit$education)
 
 # turn into wide format table
-strata.csv <-
-  do.call(rbind, partab) |>
+stratapara.csv <-
+  bind_rows(stratapara, .id = 'var') |>
   mutate(value = paste0(avg, ' (', ci025, ', ', ci975, ')')) |>
-  select(name, stratum, value) |>
-  pivot_wider(names_from = name, id_cols = stratum, values_from = value)
+  select(var, name, stratum, value) |>
+  pivot_wider(names_from = name, id_cols = c(var, stratum), values_from = value) |>
+  select(-alpha2, -beta2)
 
-# Range of rate of ontogenescence -----------------------------------------
+# latex format
+stratapara.tex <-
+  stratapara.csv |>
+  group_by(var) |>
+  # variable lable only in first row
+  mutate(var = c(var[1], rep('',n()-1))) |>
+  ungroup() |>
+  gt() |>
+  tab_header(
+    title = "Model parameters for competing-risks survival fit to feto-infant mortality across population strata."
+  )
 
-do.call(rbind, partab) |>
-  filter(name == 'beta1') |>
-  pull(avg) |>
-  range()
+# Parameter tables by cod -------------------------------------------------
 
-# Range of level of feto-infant mortality ---------------------------------
+codpara <- list(
+  pcm = PrintParameterTable(fit$pcm),
+  labor = PrintParameterTable(fit$labor),
+  congenital = PrintParameterTable(fit$congenital),
+  maternal = PrintParameterTable(fit$maternal),
+  convulsions = PrintParameterTable(fit$convulsions),
+  sepsis = PrintParameterTable(fit$sepsis),
+  hypoxia = PrintParameterTable(fit$hypoxia),
+  respiratory = PrintParameterTable(fit$respiratory),
+  prematurity = PrintParameterTable(fit$prematurity),
+  sids = PrintParameterTable(fit$sids),
+  otherspecific = PrintParameterTable(fit$otherspecific),
+  unspecific = PrintParameterTable(fit$unspecific),
+  unknown = PrintParameterTable(fit$unknown)
+)
 
-do.call(rbind, partab) |>
-  filter(name == 'alpha1') |>
-  pull(avg) |>
-  range()
+codpara.csv <-
+  codpara |>
+  bind_rows(.id = 'var') |>
+  mutate(value = paste0(avg, ' (', ci025, ', ', ci975, ')')) |>
+  select(var, name, value) |>
+  pivot_wider(names_from = name, id_cols = c(var), values_from = value) |>
+  mutate(
+    alpha2 = ifelse(beta1==beta2, '', alpha2),
+    beta2 = ifelse(beta1==beta2, '', beta2)
+  )
+
+# latex format
+codpara.tex <-
+  codpara.csv |>
+  gt() |>
+  tab_header(
+    title = "Model parameters for competing-risks survival fit to cause specific feto-infant life tables."
+  )
 
 # Export ------------------------------------------------------------------
 
-write_csv(strata.csv, paths$output$partab_strata.csv)
-qs_save(partab, paths$output$competing_risk_model_parameter_tables.qs)
+qs_save(stratapara, paths$output$stratapara.qs)
+write_csv(stratapara.csv, paths$output$stratapara.csv)
+gtsave(stratapara.tex, paths$output$stratapara.tex)
+
+qs_save(codpara, paths$output$codpara.qs)
+write_csv(codpara.csv, paths$output$codpara.csv)
+gtsave(codpara.tex, paths$output$codpara.tex)

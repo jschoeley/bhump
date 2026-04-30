@@ -11,7 +11,7 @@ packages <- list(
 	"here", "readr", "yaml", "svglite", "tidyverse", "dplyr", "rlang",
 	"cowplot", "DEoptim", "MASS", "maxLik", "numDeriv", "pracma",
 	"qs2", "data.table", "lubridate", "magrittr", "forcats", "scales",
-	"DemoDecomp"
+	"DemoDecomp", "gt"
     )
   )
 )
