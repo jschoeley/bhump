@@ -109,7 +109,10 @@ PlotHazards(fit$pcm)
 fit$labor <-
   FitFetoinfantSurvival(
     filt$labor,
-    control = ControlFitFetoinfantSurvival(hessian_inverse = 'choleskypivot')
+    control = ControlFitFetoinfantSurvival(
+      zeta_range = c(38, 42)-cnst$left_truncation_gestage,
+      hessian_inverse = 'choleskypivot'
+    )
   )
 PlotHazards(fit$labor)
 
@@ -206,7 +209,7 @@ fit$otherspecific <-
   FitFetoinfantSurvival(
     filt$otherspecific,
     control = ControlFitFetoinfantSurvival(
-      model = 'flexible1', lambda2 = 10,
+      model = 'flexible1', lambda2 = 1.8,
       zeta_range = c(39, 41)-cnst$left_truncation_gestage,
       hessian_inverse = 'choleskypivot'
     )
