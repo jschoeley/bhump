@@ -1,3 +1,5 @@
+Sys.setenv(DOWNLOAD_STATIC_LIBV8=1)
+
 here::i_am('src/_install_dependencies.R'); setwd(here::here())
 
 # specify packages used by project and the repositories from which
