@@ -34,6 +34,8 @@ OUT_OUTPUTS := \
 	$(OUT_DIR)/52-codpara.tex \
 	$(OUT_DIR)/53-competing_risks_statistics.qs \
 	$(OUT_DIR)/53-bhump_by_cod.csv \
+  $(OUT_DIR)/53-rho_by_stratum.csv \
+  $(OUT_DIR)/53-Fx_by_stratum.csv \
 	$(OUT_DIR)/54-parametric_decompositions.qs \
 	$(OUT_DIR)/55-backwards_extrapolation.svg \
 	$(OUT_DIR)/56-hzrd-origineducation.svg \
@@ -47,7 +49,9 @@ OUT_OUTPUTS := \
 	$(OUT_DIR)/62-hazards_by_social_strata.qs \
 	$(OUT_DIR)/62-hazards_by_social_strata.svg \
 	$(OUT_DIR)/63-hazards_by_cod.qs \
-	$(OUT_DIR)/63-hazards_by_cod.svg
+	$(OUT_DIR)/63-hazards_by_cod.svg \
+	$(OUT_DIR)/62-hazard_total.qs \
+	$(OUT_DIR)/62-hazard_total.svg
 
 .PHONY: all download clean help
 
@@ -144,6 +148,8 @@ $(OUT_DIR)/52-codpara.tex &: \
 	$(R) $<
 
 $(OUT_DIR)/53-competing_risks_statistics.qs \
+$(OUT_DIR)/53-rho_by_stratum.csv \
+$(OUT_DIR)/53-Fx_by_stratum.csv \
 $(OUT_DIR)/53-bhump_by_cod.csv &: \
 	$(SRC_DIR)/53-competing_risks_inference.R \
 	$(TMP_DIR)/50-competing_risks_model_fits.qs \
@@ -197,6 +203,8 @@ $(OUT_DIR)/61-overall_hazard_and_fit.svg &: \
 	$(CFG_DIR)/config.yaml | $(OUT_DIR)
 	$(R) $<
 
+$(OUT_DIR)/62-hazard_total.qs \
+$(OUT_DIR)/62-hazard_total.svg \
 $(OUT_DIR)/62-hazards_by_social_strata.qs \
 $(OUT_DIR)/62-hazards_by_social_strata.svg &: \
 	$(SRC_DIR)/62-plot_hazards_by_stratum.R \
