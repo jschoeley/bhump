@@ -78,13 +78,26 @@ stratapara.csv <-
 stratapara.tex <-
   stratapara.csv |>
   group_by(var) |>
-  # variable lable only in first row
+  # variable label only in first row
   mutate(var = c(var[1], rep('',n()-1))) |>
   ungroup() |>
+  mutate(var2 = var, stratum2 = stratum) |>
+  select(var, stratum, alpha1, beta1, gamma, var2, stratum2, sigma, tau, zeta) |>
   gt() |>
   tab_header(
     title = "Model parameters for competing-risks survival fit to feto-infant mortality across population strata."
-  )
+  ) |>
+  cols_label(
+    starts_with("var") ~ "",
+    starts_with("stratum") ~ "Stratum",
+    alpha1 ~ "{{Mortality at week 24 (:alpha:_1 )}}",
+    beta1 ~ "{{Rate of ontogenescence (:beta:_1 )}}",
+    gamma ~ "{{Birth hump magnitude (:gamma:)}}",
+    sigma ~ "{{Birth hump spread (:sigma:)}}",
+    tau ~ "{{Birth hump left skew (:tau:)}}",
+    zeta ~ "{{Birth hump location (:zeta:)}}"
+  ) |>
+  gt_split(col_slice_at = "gamma")
 
 # Parameter tables by cod -------------------------------------------------
 
@@ -107,7 +120,10 @@ codpara <- list(
 codpara.csv <-
   codpara |>
   bind_rows(.id = 'var') |>
-  mutate(value = paste0(avg, ' (', ci025, ', ', ci975, ')')) |>
+  mutate(
+    var = factor(var, levels = config$cod_lookup$key, labels = config$cod_lookup$shortlabel),
+    value = paste0(avg, ' (', ci025, ', ', ci975, ')')
+  ) |>
   select(var, name, value) |>
   pivot_wider(names_from = name, id_cols = c(var), values_from = value) |>
   mutate(
@@ -118,10 +134,26 @@ codpara.csv <-
 # latex format
 codpara.tex <-
   codpara.csv |>
+  mutate(var2 = var) |>
+  select(var, alpha1, alpha2, beta1, beta2,
+         var2, gamma, sigma, tau, zeta) |>
   gt() |>
   tab_header(
     title = "Model parameters for competing-risks survival fit to cause specific feto-infant life tables."
-  )
+  ) |>
+  cols_label(
+    starts_with("var") ~ "Cause of death",
+    starts_with("stratum") ~ "Stratum",
+    alpha1 ~ "{{Mortality at week 24 (:alpha:_1 )}}",
+    alpha2 ~ "{{Ontogen. mortality at :zeta: (:alpha:_2 )}}",
+    beta1 ~ "{{Rate of ontogen. pre :zeta: (:beta:_1 )}}",
+    beta2 ~ "{{Rate of ontogen. post :zeta: (:beta:_2 )}}",
+    gamma ~ "{{Birth hump magnitude (:gamma:)}}",
+    sigma ~ "{{Birth hump spread (:sigma:)}}",
+    tau ~ "{{Birth hump left skew (:tau:)}}",
+    zeta ~ "{{Birth hump location (:zeta:)}}"
+  ) |>
+  gt_split(col_slice_at = "beta2")
 
 # Export ------------------------------------------------------------------
 
