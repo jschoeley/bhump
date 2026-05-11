@@ -27,7 +27,9 @@ source(paths$input$figure_specs.R)
 config <- yaml::read_yaml(paths$input$config.yaml)
 
 # constants
-cnst <- list()
+cnst <- list(
+  fetoinfantdeath_per_x = 1e5
+)
 
 # Load data ---------------------------------------------------------------
 
@@ -59,16 +61,24 @@ hazards_by_cod$plot <-
   geom_line(aes(y = avg_total_hx*1e5, color = cod), na.rm = FALSE) +
   geom_point(aes(y = m*1e5, color = cod), size = 0.5, alpha = 0.5) +
   geom_text(aes(
-    label = paste0('ρ=', formatC(avg_p_birth*100,
-                                 digits = 1, format = 'f')),
+    label = paste0(
+      'ρ=',
+      formatC(avg_p_birth*100, digits = 1, format = 'f'), '% (',
+      formatC(q025_p_birth*100, digits = 1, format = 'f'), ', ',
+      formatC(q975_p_birth*100, digits = 1, format = 'f'), ')'
+    ),
     color = cod
   ), x = 76, y = 0.7, family = 'sans', parse = FALSE,
   hjust = 1, vjust = 0, size = 2.5,
   data = hazards_by_cod$data$rho_by_cod
   ) +
   geom_text(aes(
-    label = paste0('F(77)=1:', formatC(avg_total_iFx,
-                                       digits = 0, format = 'f')),
+    label = paste0(
+      'F(76)=',
+      formatC(avg_total_Fx*cnst$fetoinfantdeath_per_x, digits = 1, format = 'f', big.mark = ','), ' (',
+      formatC(q025_total_Fx*cnst$fetoinfantdeath_per_x, digits = 1, format = 'f', big.mark = ','), ', ',
+      formatC(q975_total_Fx*cnst$fetoinfantdeath_per_x, digits = 1, format = 'f', big.mark = ','), ')'
+    ),
     color = cod
   ), x = 76, y = 0.2, family = 'sans', parse = FALSE,
   hjust = 1, vjust = 0, size = 2.5,

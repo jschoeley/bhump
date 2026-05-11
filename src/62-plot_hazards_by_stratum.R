@@ -16,7 +16,9 @@ paths$input <- list(
 )
 paths$output <- list(
   hazards_by_social_strata.qs = 'out/62-hazards_by_social_strata.qs',
-  hazards_by_social_strata.svg = 'out/62-hazards_by_social_strata.svg'
+  hazards_by_social_strata.svg = 'out/62-hazards_by_social_strata.svg',
+  hazard_total.qs = 'out/62-hazard_total.qs',
+  hazard_total.svg = 'out/62-hazard_total.svg'
 )
 
 # figure specs
@@ -37,6 +39,18 @@ cnst <-
 # Input -------------------------------------------------------------------
 
 fit <- qs_read(paths$input$competing_risk_model_fits.qs)
+
+# Plot total --------------------------------------------------------------
+
+hzrd_total <- list()
+
+hzrd_total$data <- fit$total14 |> select(stratum, pred_summary, lifetable)
+
+hzrd_total$plot <- PlotHazards(
+  hzrd_total$data,
+  ylim_hx = c(0.6, 80), ylim_Fx = c(0, 1500), ar = 0.7,
+  notitle = FALSE
+)
 
 # Plot hazards by social strata -------------------------------------------
 
@@ -91,4 +105,11 @@ fig_spec$ExportSVG(
   paths$output$hazards_by_social_strata.svg,
   width = fig_spec$width,
   height = fig_spec$width*1.4
+)
+qs_save(hzrd_total$data, paths$output$hazard_total.qs)
+fig_spec$ExportSVG(
+  hzrd_total$plot,
+  paths$output$hazard_total.svg,
+  width = fig_spec$width,
+  height = 0.5*fig_spec$width
 )
