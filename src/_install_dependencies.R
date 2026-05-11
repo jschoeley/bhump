@@ -8,12 +8,12 @@ here::i_am('src/_install_dependencies.R'); setwd(here::here())
 # dput(unique(renv::dependencies()$Package))
 packages <- list(
   posit = list(
-    url = "https://packagemanager.posit.co/cran/2026-04-01/",
+    url = "https://packagemanager.posit.co/cran/2026-05-01/",
     packages = c(
-	"here", "readr", "yaml", "svglite", "tidyverse", "dplyr", "rlang",
-	"cowplot", "DEoptim", "MASS", "maxLik", "numDeriv", "pracma",
-	"qs2", "data.table", "lubridate", "magrittr", "forcats", "scales",
-	"DemoDecomp", "gt"
+      "here", "readr", "yaml", "svglite", "tidyverse", "dplyr", "rlang",
+      "cowplot", "DEoptim", "MASS", "maxLik", "numDeriv", "pracma",
+      "qs2", "data.table", "lubridate", "magrittr", "forcats", "scales",
+      "DemoDecomp", "gt"
     )
   )
 )
