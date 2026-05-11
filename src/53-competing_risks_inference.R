@@ -16,7 +16,9 @@ paths$input <- list(
 )
 paths$output <- list(
   competing_risks_statistics.qs = 'out/53-competing_risks_statistics.qs',
-  bhump_by_cod.csv = 'out/53-bhump_by_cod.csv'
+  bhump_by_cod.csv = 'out/53-bhump_by_cod.csv',
+  rho_by_stratum.csv = 'out/53-rho_by_stratum.csv',
+  Fx_by_stratum.csv = 'out/53-Fx_by_stratum.csv'
 )
 
 # fetoinfant lifetable functions
@@ -30,7 +32,8 @@ config <- yaml::read_yaml(paths$input$config.yaml)
 cnst <-
   list(
     # censoring age, end of analysis time
-    right_censoring_gestage = 77
+    right_censoring_gestage = 77,
+    fetoinfantdeath_per_x = 1e5
   )
 
 # tables
@@ -49,7 +52,9 @@ tab$rho <- list(
   # by sex
   sex = BirthHumpDeaths(fit$sex, x = cnst$right_censoring_gestage),
   # by cohort
-  cohort = BirthHumpDeaths(fit$cohort, x = cnst$right_censoring_gestage),
+  cohort =
+    BirthHumpDeaths(fit$cohort, x = cnst$right_censoring_gestage) |>
+    mutate(stratum = as.character(stratum)),
   # by origin
   origin = BirthHumpDeaths(fit$origin, x = cnst$right_censoring_gestage),
   # by education
@@ -84,7 +89,8 @@ tab$Fx_by_stratum <- list(
   # by sex
   sex = ProbFetoInfantDeath(fit$sex),
   # by cohort
-  cohort = ProbFetoInfantDeath(fit$cohort),
+  cohort = ProbFetoInfantDeath(fit$cohort) |>
+    mutate(stratum = as.character(stratum)),
   # by origin
   origin = ProbFetoInfantDeath(fit$origin),
   # by education
@@ -134,6 +140,18 @@ tab$bhump_by_cod <-
 
 qs_save(tab, paths$output$competing_risks_statistics.qs)
 write_csv(
-  mutate(tab$bhump_by_cod, across(where(is.numeric), ~ round(.x, 2))),
+  mutate(tab$bhump_by_cod, across(where(is.numeric), ~ round(.x, 1))),
   paths$output$bhump_by_cod.csv
+)
+write_csv(
+  bind_rows(tab$rho, .id = 'var') |>
+  mutate(across(where(is.numeric), ~ .x*1e2)) |>
+  mutate(across(where(is.numeric), ~ round(.x, 1))),
+  paths$output$rho_by_stratum.csv
+)
+write_csv(
+  bind_rows(tab$Fx_by_stratum, .id = 'var') |>
+    mutate(across(ends_with('_Fx'), ~ .x*cnst$fetoinfantdeath_per_x)) |>
+    mutate(across(where(is.numeric), ~ round(.x, 1))),
+  paths$output$Fx_by_stratum.csv
 )
