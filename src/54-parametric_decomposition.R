@@ -14,28 +14,33 @@ here::i_am('src/54-parametric_decomposition.R'); setwd(here::here())
 
 library(tidyverse)
 library(qs2)
+library(readr)
+library(gt)
 
 paths <- list()
 paths$input <- list(
   competing_risk_model_fits.qs = 'tmp/50-competing_risks_model_fits.qs',
-  parametric_functions.R = 'src/00-fnct-parametric_survival_model.R',
+  parametric_decomposition.R = 'src/00-fnct-parametric_decomposition.R',
+  parametric_survival_model.R = 'src/00-fnct-parametric_survival_model.R',
   config.yaml = 'cfg/config.yaml'
 )
 paths$output <- list(
   parametric_decompositions.qs =
-    'out/54-parametric_decompositions.qs'
+    'out/54-parametric_decompositions.qs',
+  parametric_decompositions.csv =
+    'out/54-parametric_decompositions.csv',
+  parametric_decompositions.tex =
+    'out/54-parametric_decompositions.tex'
 )
 
 config <- yaml::read_yaml(paths$input$config.yaml)
 
 # fetoinfant parametric functions
-source(paths$input$parametric_functions.R)
+source(paths$input$parametric_decomposition.R)
+source(paths$input$parametric_survival_model.R)
 
 # constants
-cnst <-
-  list(
-    cod = config$cod_lookup$key
-  )
+cnst <- list()
 
 # Load data ---------------------------------------------------------------
 
@@ -43,137 +48,6 @@ cnst <-
 fit <- qs_read(paths$input$competing_risk_model_fits.qs)
 
 # Parametric decomposition of mortality differences -----------------------
-
-DecomposeFetoInfantDeaths <-
-  function (filt_fit, pop1, pop2) {
-    
-    require(DemoDecomp)
-    require(rlang)
-    
-    FetoinfantDeaths <-
-      function (pars, control) {
-        pars_rescaled <- RescaleParameters(
-          pars, control$model, control$split,
-          zeta_range = control$zeta_range,
-          beta1_range = control$beta1_range,
-          beta2_range = control$beta2_range
-        )
-        (1-FetoinfantSurv(76-24, pars_rescaled))*1e5
-      }
-    
-    control <- filt_fit$control[[1]]
-    
-    total_difference <-
-      filt_fit %>%
-      unnest_legacy(par_draws) %>%
-      select(draw, stratum, name, value) %>%
-      filter(
-        stratum %in%
-          c(as_name(enquo(pop1)), as_name(enquo(pop2)))
-      ) %>%
-      spread(stratum, value) %>%
-      group_by(draw) %>%
-      summarise(
-        {{pop1}} := FetoinfantDeaths({{pop1}}, control),
-        {{pop2}} := FetoinfantDeaths({{pop2}}, control),
-        diff = {{pop2}}-{{pop1}},
-        reldiff = diff/{{pop1}}
-      ) %>%
-      ungroup() %>%
-      summarise(
-        {{pop1}} := mean({{pop1}}),
-        {{pop2}} := mean({{pop2}}),
-        diff_avg = mean(diff),
-        diff_se = sd(diff),
-        diff_q025 = quantile(diff, 0.025),
-        diff_q975 = quantile(diff, 0.975),
-        reldiff_avg = mean(reldiff),
-        reldiff_se = sd(reldiff),
-        reldiff_q025 = quantile(reldiff, 0.025),
-        reldiff_q975 = quantile(reldiff, 0.975)
-      ) %>%
-      pivot_longer(everything())
-    
-    parameter_decomp_draw <-
-      filt_fit %>%
-      unnest_legacy(par_draws) %>%
-      select(draw, stratum, name, value) %>%
-      filter(
-        stratum %in% c(as_name(enquo(pop1)), as_name(enquo(pop2)))
-      ) %>%
-      spread(stratum, value) %>%
-      group_by(draw) %>%
-      mutate(
-        contribution =
-          horiuchi(
-            FetoinfantDeaths,
-            pars1 = {{pop1}},
-            pars2 = {{pop2}},
-            N = 1e2,
-            control
-          )
-      )
-    
-    parameter_decomp_summary <-
-      parameter_decomp_draw %>%
-      group_by(name) %>%
-      summarise(
-        '{{pop1}}_avg' :=
-          mean({{pop1}}),
-        '{{pop2}}_avg' :=
-          mean({{pop2}}),
-        '{{pop1}}_se' := sd({{pop1}}),
-        '{{pop2}}_se' := sd({{pop2}}),
-        '{{pop1}}_ci025' := quantile({{pop1}}, 0.025),
-        '{{pop2}}_ci975' := quantile({{pop1}}, 0.975),
-        contribution_avg = mean(contribution),
-        contribution_se = sd(contribution),
-        contribution_ci025 = quantile(contribution, 0.025),
-        contribution_ci975 = quantile(contribution, 0.975),
-      )
-    
-    component_decomp <-
-      parameter_decomp_draw %>%
-      group_by(draw) %>%
-      group_modify(~{
-        tibble(
-          level =
-            .x %>%
-            filter(grepl('alpha', name)) %>%
-            pull('contribution'),
-          ontog = .x %>%
-            filter(grepl('beta', name)) %>%
-            pull('contribution'),
-          trans =
-            .x %>%
-            filter(grepl('gamma|tau|zeta|sigma', name)) %>%
-            pull('contribution') %>% sum()
-        )  
-      }) %>%
-      ungroup() %>%
-      summarise(
-        level_avg = mean(level),
-        level_se = sd(level),
-        level_ci025 = quantile(level, 0.025),
-        level_ci975 = quantile(level, 0.975),
-        ontog_avg = mean(ontog),
-        ontog_se = sd(ontog),
-        ontog_ci025 = quantile(ontog, 0.025),
-        ontog_ci975 = quantile(ontog, 0.975),
-        trans_avg = mean(trans),
-        trans_se = sd(trans),
-        trans_ci025 = quantile(trans, 0.025),
-        trans_ci975 = quantile(trans, 0.975),
-      ) %>%
-      pivot_longer(everything())
-    
-    list(
-      diff = total_difference,
-      para = parameter_decomp_summary,
-      comp = component_decomp
-    )
-    
-  }
 
 decomp <- list(
   sex = list(),
@@ -184,6 +58,11 @@ decomp <- list(
 
 # by sex
 decomp$sex$female_male <- DecomposeFetoInfantDeaths(fit$sex, Female, Male)
+decomp$sex$tabl <-
+  bind_cols(
+    `Name` = decomp$sex$female_male$tabl[,1][[1]],
+    `Male-Female` = decomp$sex$female_male$tabl[,2][[1]]
+  )
 
 # by cohort
 decomp$cohort$`89vs99` <-
@@ -194,6 +73,14 @@ decomp$cohort$`09vs14` <-
   DecomposeFetoInfantDeaths(fit$cohort, `2009`, `2014`)
 decomp$cohort$`89vs14` <-
   DecomposeFetoInfantDeaths(fit$cohort, `1989`, `2014`)
+decomp$cohort$tabl <-
+  bind_cols(
+    `Name` = decomp$cohort$`89vs99`$tabl[,1][[1]],
+    `1989-1999` = decomp$cohort$`89vs99`$tabl[,-1][[1]],
+    `1999-2009` = decomp$cohort$`99vs09`$tabl[,-1][[1]],
+    `2009-2014` = decomp$cohort$`09vs14`$tabl[,-1][[1]],
+    `1989-2014` = decomp$cohort$`89vs14`$tabl[,-1][[1]]
+  )
 
 # by origin
 decomp$origin$white_black <-
@@ -202,11 +89,60 @@ decomp$origin$white_hispanic <-
   DecomposeFetoInfantDeaths(fit$origin, `Non-Hispanic White`, `Hispanic`)
 decomp$origin$black_hispanic <-
   DecomposeFetoInfantDeaths(fit$origin, `Non-Hispanic Black`, `Hispanic`)
+decomp$origin$tabl <-
+  bind_cols(
+    `Name` = decomp$origin$white_black$tabl[,1][[1]],
+    `White-Black` = decomp$origin$white_black$tabl[,-1][[1]],
+    `White-Hispanic` = decomp$origin$white_hispanic$tabl[,-1][[1]],
+    `Black-Hispanic` = decomp$origin$black_hispanic$tabl[,-1][[1]]
+  )
 
 # by education
 decomp$education$primary_academic <-
   DecomposeFetoInfantDeaths(fit$education, `Primary`, `Bachelor, Master, Doctorate`)
+decomp$education$highschool_academic <-
+  DecomposeFetoInfantDeaths(fit$education, `High school`, `Bachelor, Master, Doctorate`)
+decomp$education$associate_academic <-
+  DecomposeFetoInfantDeaths(fit$education, `Associate`, `Bachelor, Master, Doctorate`)
+decomp$education$tabl <-
+  bind_cols(
+    `Name` = decomp$education$primary_academic$tabl[,1][[1]],
+    `Primary-Academic` = decomp$education$primary_academic$tabl[,-1][[1]],
+    `Highschool-Academic` = decomp$education$highschool_academic$tabl[,-1][[1]],
+    `Associate-Academic` = decomp$education$associate_academic$tabl[,-1][[1]]
+  )
+
+# Prepare for export ------------------------------------------------------
+
+parametric_decompositions.csv <- bind_rows(
+  sex =
+    decomp$sex$tabl[,-1] |> t() |> as.data.frame() |> rownames_to_column(),
+  origin =
+    decomp$origin$tabl[,-1] |> t() |> as.data.frame() |> rownames_to_column(),
+  cohort =
+    decomp$cohort$tabl[,-1] |> t() |> as.data.frame() |> rownames_to_column(),
+  education =
+    decomp$education$tabl[,-1] |> t() |> as.data.frame() |> rownames_to_column(),
+  .id = 'Var'
+)
+colnames(parametric_decompositions.csv) <-
+  c('Var', 'Contrast', unlist(decomp$sex$tabl[,1]))
+
+
+# latex format
+parametric_decompositions.tex <-
+  parametric_decompositions.csv |>
+  group_by(Var) |>
+  # variable lable only in first row
+  mutate(Var = c(Var[1], rep('',n()-1))) |>
+  ungroup() |>
+  gt() |>
+  tab_header(
+    title = "Contributions of model components to differences in one year post-viability feto-infant survival."
+  )
 
 # Export ------------------------------------------------------------------
 
 qs_save(decomp, paths$output$parametric_decompositions.qs)
+write_csv(parametric_decompositions.csv, paths$output$parametric_decompositions.csv)
+gtsave(parametric_decompositions.tex, paths$output$parametric_decompositions.tex)
