@@ -28,11 +28,11 @@
 <g clip-path='url(#cpMC4wMHwzNTMuMjB8MC4wMHwxNzYuNjA=)'>
 </g>
 <defs>
-  <clipPath id='cpMC4wMHwxNzYuNjB8OS44MnwxNjYuNzg='>
-    <rect x='0.00' y='9.82' width='176.60' height='156.97' />
+  <clipPath id='cpMC4wMHwxNzYuNjB8OS42MXwxNjYuOTk='>
+    <rect x='0.00' y='9.61' width='176.60' height='157.39' />
   </clipPath>
 </defs>
-<g clip-path='url(#cpMC4wMHwxNzYuNjB8OS44MnwxNjYuNzg=)'>
+<g clip-path='url(#cpMC4wMHwxNzYuNjB8OS42MXwxNjYuOTk=)'>
 </g>
 <g clip-path='url(#cpMC4wMHwzNTMuMjB8MC4wMHwxNzYuNjA=)'>
 </g>
@@ -103,16 +103,16 @@
 </g>
 <g clip-path='url(#cpMC4wMHwzNTMuMjB8MC4wMHwxNzYuNjA=)'>
 <polyline points='13.90,146.43 13.90,32.54 ' style='stroke-width: 0.64; stroke-linecap: square;' />
-<text x='10.31' y='133.20' text-anchor='end' style='font-size: 8.00px; font-family: "Arimo";'>1</text>
-<text x='10.31' y='118.53' text-anchor='end' style='font-size: 8.00px; font-family: "Arimo";'>2</text>
-<text x='10.31' y='103.87' text-anchor='end' style='font-size: 8.00px; font-family: "Arimo";'>4</text>
-<text x='10.31' y='95.29' text-anchor='end' style='font-size: 8.00px; font-family: "Arimo";'>6</text>
-<text x='10.31' y='89.20' text-anchor='end' style='font-size: 8.00px; font-family: "Arimo";'>8</text>
-<text x='10.31' y='84.48' text-anchor='end' style='font-size: 8.00px; font-family: "Arimo";'>10</text>
-<text x='10.31' y='69.81' text-anchor='end' style='font-size: 8.00px; font-family: "Arimo";'>20</text>
-<text x='10.31' y='55.14' text-anchor='end' style='font-size: 8.00px; font-family: "Arimo";'>40</text>
-<text x='10.31' y='46.56' text-anchor='end' style='font-size: 8.00px; font-family: "Arimo";'>60</text>
-<text x='10.31' y='40.47' text-anchor='end' style='font-size: 8.00px; font-family: "Arimo";'>80</text>
+<text x='10.31' y='133.30' text-anchor='end' style='font-size: 8.00px; font-family: "Noto Sans";'>1</text>
+<text x='10.31' y='118.64' text-anchor='end' style='font-size: 8.00px; font-family: "Noto Sans";'>2</text>
+<text x='10.31' y='103.97' text-anchor='end' style='font-size: 8.00px; font-family: "Noto Sans";'>4</text>
+<text x='10.31' y='95.39' text-anchor='end' style='font-size: 8.00px; font-family: "Noto Sans";'>6</text>
+<text x='10.31' y='89.30' text-anchor='end' style='font-size: 8.00px; font-family: "Noto Sans";'>8</text>
+<text x='10.31' y='84.58' text-anchor='end' style='font-size: 8.00px; font-family: "Noto Sans";'>10</text>
+<text x='10.31' y='69.91' text-anchor='end' style='font-size: 8.00px; font-family: "Noto Sans";'>20</text>
+<text x='10.31' y='55.25' text-anchor='end' style='font-size: 8.00px; font-family: "Noto Sans";'>40</text>
+<text x='10.31' y='46.67' text-anchor='end' style='font-size: 8.00px; font-family: "Noto Sans";'>60</text>
+<text x='10.31' y='40.58' text-anchor='end' style='font-size: 8.00px; font-family: "Noto Sans";'>80</text>
 <polyline points='11.91,130.45 13.90,130.45 ' style='stroke-width: 0.32; stroke-linecap: square;' />
 <polyline points='11.91,115.78 13.90,115.78 ' style='stroke-width: 0.32; stroke-linecap: square;' />
 <polyline points='11.91,101.11 13.90,101.11 ' style='stroke-width: 0.32; stroke-linecap: square;' />
@@ -138,34 +138,34 @@
 <polyline points='144.32,148.42 144.32,146.43 ' style='stroke-width: 0.32; stroke-linecap: square;' />
 <polyline points='155.50,148.42 155.50,146.43 ' style='stroke-width: 0.32; stroke-linecap: square;' />
 <polyline points='166.69,148.42 166.69,146.43 ' style='stroke-width: 0.32; stroke-linecap: square;' />
-<text x='21.30' y='155.53' text-anchor='middle' style='font-size: 8.00px; font-family: "Arimo";'>24</text>
-<text x='32.48' y='155.53' text-anchor='middle' style='font-size: 8.00px; font-family: "Arimo";'>28</text>
-<text x='43.66' y='155.53' text-anchor='middle' style='font-size: 8.00px; font-family: "Arimo";'>32</text>
-<text x='54.85' y='155.53' text-anchor='middle' style='font-size: 8.00px; font-family: "Arimo";'>36</text>
-<text x='66.03' y='155.53' text-anchor='middle' style='font-size: 8.00px; font-family: "Arimo";'>40</text>
-<text x='77.22' y='155.53' text-anchor='middle' style='font-size: 8.00px; font-family: "Arimo";'>44</text>
-<text x='88.40' y='155.53' text-anchor='middle' style='font-size: 8.00px; font-family: "Arimo";'>48</text>
-<text x='99.58' y='155.53' text-anchor='middle' style='font-size: 8.00px; font-family: "Arimo";'>52</text>
-<text x='110.77' y='155.53' text-anchor='middle' style='font-size: 8.00px; font-family: "Arimo";'>56</text>
-<text x='121.95' y='155.53' text-anchor='middle' style='font-size: 8.00px; font-family: "Arimo";'>60</text>
-<text x='133.13' y='155.53' text-anchor='middle' style='font-size: 8.00px; font-family: "Arimo";'>64</text>
-<text x='144.32' y='155.53' text-anchor='middle' style='font-size: 8.00px; font-family: "Arimo";'>68</text>
-<text x='155.50' y='155.53' text-anchor='middle' style='font-size: 8.00px; font-family: "Arimo";'>72</text>
-<text x='166.69' y='155.53' text-anchor='middle' style='font-size: 8.00px; font-family: "Arimo";'>76</text>
-<text x='95.25' y='165.02' text-anchor='middle' style='font-size: 8.00px; font-weight: bold; font-family: "Arimo";'>Week of gestation</text>
+<text x='21.30' y='155.74' text-anchor='middle' style='font-size: 8.00px; font-family: "Noto Sans";'>24</text>
+<text x='32.48' y='155.74' text-anchor='middle' style='font-size: 8.00px; font-family: "Noto Sans";'>28</text>
+<text x='43.66' y='155.74' text-anchor='middle' style='font-size: 8.00px; font-family: "Noto Sans";'>32</text>
+<text x='54.85' y='155.74' text-anchor='middle' style='font-size: 8.00px; font-family: "Noto Sans";'>36</text>
+<text x='66.03' y='155.74' text-anchor='middle' style='font-size: 8.00px; font-family: "Noto Sans";'>40</text>
+<text x='77.22' y='155.74' text-anchor='middle' style='font-size: 8.00px; font-family: "Noto Sans";'>44</text>
+<text x='88.40' y='155.74' text-anchor='middle' style='font-size: 8.00px; font-family: "Noto Sans";'>48</text>
+<text x='99.58' y='155.74' text-anchor='middle' style='font-size: 8.00px; font-family: "Noto Sans";'>52</text>
+<text x='110.77' y='155.74' text-anchor='middle' style='font-size: 8.00px; font-family: "Noto Sans";'>56</text>
+<text x='121.95' y='155.74' text-anchor='middle' style='font-size: 8.00px; font-family: "Noto Sans";'>60</text>
+<text x='133.13' y='155.74' text-anchor='middle' style='font-size: 8.00px; font-family: "Noto Sans";'>64</text>
+<text x='144.32' y='155.74' text-anchor='middle' style='font-size: 8.00px; font-family: "Noto Sans";'>68</text>
+<text x='155.50' y='155.74' text-anchor='middle' style='font-size: 8.00px; font-family: "Noto Sans";'>72</text>
+<text x='166.69' y='155.74' text-anchor='middle' style='font-size: 8.00px; font-family: "Noto Sans";'>76</text>
+<text x='95.25' y='165.23' text-anchor='middle' style='font-size: 8.00px; font-weight: bold; font-family: "Noto Sans";'>Week of gestation</text>
 <circle cx='135.76' cy='61.07' r='0.47' style='stroke-width: 0.52; stroke: #D23737; stroke-opacity: 0.20; fill: #D23737; fill-opacity: 0.20;' />
 <line x1='128.85' y1='61.07' x2='142.67' y2='61.07' style='stroke-width: 0.64; stroke: #D23737; stroke-linecap: butt;' />
 <rect x='127.63' y='52.94' width='16.25' height='16.25' style='stroke-width: 0.78; stroke: none; stroke-linecap: butt; fill: #D23737; fill-opacity: 0.20;' />
-<text x='148.38' y='63.26' style='font-size: 6.40px; font-family: "Arimo";'>Total</text>
-<text x='13.90' y='18.16' style='font-size: 8.00px; font-weight: bold; font-family: "Arimo";'>Feto-infant deaths per</text>
-<text x='13.90' y='26.80' style='font-size: 8.00px; font-weight: bold; font-family: "Arimo";'>100,000 weeks at risk</text>
+<text x='148.38' y='63.35' style='font-size: 6.40px; font-family: "Noto Sans";'>Total</text>
+<text x='13.90' y='18.16' style='font-size: 8.00px; font-weight: bold; font-family: "Noto Sans";'>Feto-infant deaths per</text>
+<text x='13.90' y='26.80' style='font-size: 8.00px; font-weight: bold; font-family: "Noto Sans";'>100,000 weeks at risk</text>
 </g>
 <defs>
-  <clipPath id='cpMTc2LjYwfDM1My4yMHwxMi45M3wxNjMuNjc='>
-    <rect x='176.60' y='12.93' width='176.60' height='150.74' />
+  <clipPath id='cpMTc2LjYwfDM1My4yMHwxMi43MnwxNjMuODg='>
+    <rect x='176.60' y='12.72' width='176.60' height='151.16' />
   </clipPath>
 </defs>
-<g clip-path='url(#cpMTc2LjYwfDM1My4yMHwxMi45M3wxNjMuNjc=)'>
+<g clip-path='url(#cpMTc2LjYwfDM1My4yMHwxMi43MnwxNjMuODg=)'>
 </g>
 <g clip-path='url(#cpMC4wMHwzNTMuMjB8MC4wMHwxNzYuNjA=)'>
 </g>
@@ -236,10 +236,10 @@
 </g>
 <g clip-path='url(#cpMC4wMHwzNTMuMjB8MC4wMHwxNzYuNjA=)'>
 <polyline points='199.39,143.32 199.39,35.66 ' style='stroke-width: 0.64; stroke-linecap: square;' />
-<text x='195.81' y='141.18' text-anchor='end' style='font-size: 8.00px; font-family: "Arimo";'>0</text>
-<text x='195.81' y='108.55' text-anchor='end' style='font-size: 8.00px; font-family: "Arimo";'>500</text>
-<text x='195.81' y='75.93' text-anchor='end' style='font-size: 8.00px; font-family: "Arimo";'>1000</text>
-<text x='195.81' y='43.30' text-anchor='end' style='font-size: 8.00px; font-family: "Arimo";'>1500</text>
+<text x='195.81' y='141.28' text-anchor='end' style='font-size: 8.00px; font-family: "Noto Sans";'>0</text>
+<text x='195.81' y='108.66' text-anchor='end' style='font-size: 8.00px; font-family: "Noto Sans";'>500</text>
+<text x='195.81' y='76.03' text-anchor='end' style='font-size: 8.00px; font-family: "Noto Sans";'>1000</text>
+<text x='195.81' y='43.41' text-anchor='end' style='font-size: 8.00px; font-family: "Noto Sans";'>1500</text>
 <polyline points='197.40,138.42 199.39,138.42 ' style='stroke-width: 0.32; stroke-linecap: square;' />
 <polyline points='197.40,105.80 199.39,105.80 ' style='stroke-width: 0.32; stroke-linecap: square;' />
 <polyline points='197.40,73.18 199.39,73.18 ' style='stroke-width: 0.32; stroke-linecap: square;' />
@@ -259,22 +259,22 @@
 <polyline points='322.46,145.31 322.46,143.32 ' style='stroke-width: 0.32; stroke-linecap: square;' />
 <polyline points='333.02,145.31 333.02,143.32 ' style='stroke-width: 0.32; stroke-linecap: square;' />
 <polyline points='343.57,145.31 343.57,143.32 ' style='stroke-width: 0.32; stroke-linecap: square;' />
-<text x='206.39' y='152.41' text-anchor='middle' style='font-size: 8.00px; font-family: "Arimo";'>24</text>
-<text x='216.94' y='152.41' text-anchor='middle' style='font-size: 8.00px; font-family: "Arimo";'>28</text>
-<text x='227.49' y='152.41' text-anchor='middle' style='font-size: 8.00px; font-family: "Arimo";'>32</text>
-<text x='238.04' y='152.41' text-anchor='middle' style='font-size: 8.00px; font-family: "Arimo";'>36</text>
-<text x='248.60' y='152.41' text-anchor='middle' style='font-size: 8.00px; font-family: "Arimo";'>40</text>
-<text x='259.15' y='152.41' text-anchor='middle' style='font-size: 8.00px; font-family: "Arimo";'>44</text>
-<text x='269.70' y='152.41' text-anchor='middle' style='font-size: 8.00px; font-family: "Arimo";'>48</text>
-<text x='280.25' y='152.41' text-anchor='middle' style='font-size: 8.00px; font-family: "Arimo";'>52</text>
-<text x='290.81' y='152.41' text-anchor='middle' style='font-size: 8.00px; font-family: "Arimo";'>56</text>
-<text x='301.36' y='152.41' text-anchor='middle' style='font-size: 8.00px; font-family: "Arimo";'>60</text>
-<text x='311.91' y='152.41' text-anchor='middle' style='font-size: 8.00px; font-family: "Arimo";'>64</text>
-<text x='322.46' y='152.41' text-anchor='middle' style='font-size: 8.00px; font-family: "Arimo";'>68</text>
-<text x='333.02' y='152.41' text-anchor='middle' style='font-size: 8.00px; font-family: "Arimo";'>72</text>
-<text x='343.57' y='152.41' text-anchor='middle' style='font-size: 8.00px; font-family: "Arimo";'>76</text>
-<text x='199.39' y='21.27' style='font-size: 8.00px; font-weight: bold; font-family: "Arimo";'>Cumulative feto-infant deaths</text>
-<text x='199.39' y='29.91' style='font-size: 8.00px; font-weight: bold; font-family: "Arimo";'>out of 100,000 cohort members</text>
+<text x='206.39' y='152.62' text-anchor='middle' style='font-size: 8.00px; font-family: "Noto Sans";'>24</text>
+<text x='216.94' y='152.62' text-anchor='middle' style='font-size: 8.00px; font-family: "Noto Sans";'>28</text>
+<text x='227.49' y='152.62' text-anchor='middle' style='font-size: 8.00px; font-family: "Noto Sans";'>32</text>
+<text x='238.04' y='152.62' text-anchor='middle' style='font-size: 8.00px; font-family: "Noto Sans";'>36</text>
+<text x='248.60' y='152.62' text-anchor='middle' style='font-size: 8.00px; font-family: "Noto Sans";'>40</text>
+<text x='259.15' y='152.62' text-anchor='middle' style='font-size: 8.00px; font-family: "Noto Sans";'>44</text>
+<text x='269.70' y='152.62' text-anchor='middle' style='font-size: 8.00px; font-family: "Noto Sans";'>48</text>
+<text x='280.25' y='152.62' text-anchor='middle' style='font-size: 8.00px; font-family: "Noto Sans";'>52</text>
+<text x='290.81' y='152.62' text-anchor='middle' style='font-size: 8.00px; font-family: "Noto Sans";'>56</text>
+<text x='301.36' y='152.62' text-anchor='middle' style='font-size: 8.00px; font-family: "Noto Sans";'>60</text>
+<text x='311.91' y='152.62' text-anchor='middle' style='font-size: 8.00px; font-family: "Noto Sans";'>64</text>
+<text x='322.46' y='152.62' text-anchor='middle' style='font-size: 8.00px; font-family: "Noto Sans";'>68</text>
+<text x='333.02' y='152.62' text-anchor='middle' style='font-size: 8.00px; font-family: "Noto Sans";'>72</text>
+<text x='343.57' y='152.62' text-anchor='middle' style='font-size: 8.00px; font-family: "Noto Sans";'>76</text>
+<text x='199.39' y='21.27' style='font-size: 8.00px; font-weight: bold; font-family: "Noto Sans";'>Cumulative feto-infant deaths</text>
+<text x='199.39' y='29.91' style='font-size: 8.00px; font-weight: bold; font-family: "Noto Sans";'>out of 100,000 cohort members</text>
 </g>
 </g>
 </svg>

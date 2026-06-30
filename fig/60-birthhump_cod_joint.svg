@@ -5,8 +5,11 @@
    viewBox="0 0 353.20 211.92"
    version="1.1"
    id="svg56"
-   sodipodi:docname="60-birthhump_cod_joint_foo.svg"
+   sodipodi:docname="60-birthhump_cod_joint.svg"
    inkscape:version="1.4.4 (dcaf3e7d9e, 2026-05-05)"
+   inkscape:export-filename="60-birthhump_cod_joint.png"
+   inkscape:export-xdpi="611.55151"
+   inkscape:export-ydpi="611.55151"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -23,15 +26,16 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#505050"
      inkscape:document-units="pt"
-     inkscape:zoom="1.4501995"
-     inkscape:cx="313.40515"
-     inkscape:cy="160.32276"
+     inkscape:zoom="2.0508918"
+     inkscape:cx="216.97878"
+     inkscape:cy="101.66309"
      inkscape:window-width="1720"
      inkscape:window-height="1372"
-     inkscape:window-x="1720"
+     inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="0"
-     inkscape:current-layer="g56" />
+     inkscape:current-layer="g56"
+     inkscape:export-bgcolor="#ffffffff" />
   <g
      class="svglite"
      id="g56">
@@ -282,12 +286,12 @@
          x="188.49001"
          y="210"
          text-anchor="middle"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8px;font-family:'Roboto Condensed';-inkscape-font-specification:'Roboto Condensed, '"
+         style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:8px;font-family:'Roboto Condensed';-inkscape-font-specification:'Roboto Condensed,  Medium'"
          id="text29">Week of gestation</text>
       <text
          transform="rotate(-90,52.04,44.91)"
          text-anchor="middle"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8px;font-family:'Roboto Condensed';-inkscape-font-specification:'Roboto Condensed, '"
+         style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:8px;font-family:'Roboto Condensed';-inkscape-font-specification:'Roboto Condensed,  Medium'"
          id="text30">Feto-infant deaths per 100,000 weeks at risk</text>
     </g>
     <g
@@ -586,7 +590,7 @@
          id="tspan57-3"
          style="fill:#ffffff;stroke-width:0.75"
          x="169.22575"
-         y="149.03314">0.8</tspan></text>
+         y="149.03314">0.9</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:5px;font-family:'Roboto Condensed';-inkscape-font-specification:'Roboto Condensed,  Medium';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;white-space:pre;fill:#000000;stroke-width:0.75"

@@ -1,14 +1,14 @@
 cod,p_birth,p_ontogen,p_total
 PCM complications,25.6,7.4,14.6
-Labor complications,0.8,0.4,0.6
+Labor complications,0.9,0.4,0.6
 Congenital malformations,23.4,14.8,18.2
 Maternal conditions,12,8.5,9.8
 Convulsions and cerebral,1.5,0.2,0.7
 Sepsis,0.2,2.9,1.8
 Hypoxia and asphyxia,0.8,0.8,0.8
-Respiratory and cardiovascular,1.6,5.7,4
+Respiratory and cardiovascular,1.6,5.7,4.1
 Fetal growth and prematurity,0.6,5.7,3.7
-SIDS,0,18.8,11.4
-Other specific,1,21.2,13.2
+SIDS,0,18.8,11.3
+Other specific,1,21.1,13.2
 Unspecific stillbirth,26.9,10.2,16.8
 Unknown,5.6,3.6,4.4

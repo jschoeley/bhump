@@ -5,9 +5,9 @@
    viewBox="0 0 353.20 423.84"
    version="1.1"
    id="svg1458"
-   sodipodi:docname="63-hazards_by_cod (copy).svg"
+   sodipodi:docname="63-hazards_by_cod.svg"
    inkscape:version="1.4.4 (dcaf3e7d9e, 2026-05-05)"
-   inkscape:export-filename="63-hazards_by_cod (copy).png"
+   inkscape:export-filename="63-hazards_by_cod.png"
    inkscape:export-xdpi="611.55151"
    inkscape:export-ydpi="611.55151"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -27,14 +27,14 @@
      inkscape:deskcolor="#505050"
      inkscape:document-units="pt"
      inkscape:zoom="2.0508919"
-     inkscape:cx="235.5073"
-     inkscape:cy="282.56"
-     inkscape:window-width="3440"
+     inkscape:cx="235.2635"
+     inkscape:cy="282.55999"
+     inkscape:window-width="1720"
      inkscape:window-height="1372"
      inkscape:window-x="0"
      inkscape:window-y="0"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="g108"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="g1458"
      inkscape:export-bgcolor="#ffffffff" />
   <g
      class="svglite"
@@ -650,7 +650,7 @@
            x="133.1857"
            y="40.157227"
            id="tspan1461"
-           style="line-height:1">ρ=69.6% (68.4, 70.8)</tspan></text>
+           style="line-height:1">ρ=69.6% (68.3, 70.7)</tspan></text>
       <line
          x1="63.39"
          y1="79.86"
@@ -690,7 +690,7 @@
            id="tspan1463"
            x="31.175322"
            y="77.197784"
-           style="line-height:1">F(76)=116.7 (114.8, 118.8)</tspan></text>
+           style="line-height:1">F(52)=116.8 (114.9, 118.9)</tspan></text>
     </g>
     <g
        clip-path="url(#cpMC4wMHwzNTMuMjB8MC4wMHw0MjMuODQ=)"
@@ -1245,13 +1245,13 @@
          y="104.63"
          text-anchor="end"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6px;font-family:'Roboto Condensed';-inkscape-font-specification:'Roboto Condensed, ';fill:#f3aa9b"
-         id="text213">ρ=48.3% (47.9, 48.7)</text>
+         id="text213">ρ=48.2% (47.8, 48.6)</text>
       <text
          x="132.82001"
          y="112.23"
          text-anchor="end"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6px;font-family:'Roboto Condensed';-inkscape-font-specification:'Roboto Condensed, ';fill:#f3aa9b"
-         id="text214">F(76)=78.5 (77.9, 79.1)</text>
+         id="text214">F(52)=78.6 (78.0, 79.3)</text>
       <line
          x1="63.39"
          y1="160.88"
@@ -1820,13 +1820,13 @@
          y="185.64999"
          text-anchor="end"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6px;font-family:'Roboto Condensed';-inkscape-font-specification:'Roboto Condensed, ';fill:#63abd2"
-         id="text319">ρ=40.3% (38.1, 42.6)</text>
+         id="text319">ρ=40.3% (38.0, 42.5)</text>
       <text
          x="132.82001"
          y="193.25"
          text-anchor="end"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6px;font-family:'Roboto Condensed';-inkscape-font-specification:'Roboto Condensed, ';fill:#63abd2"
-         id="text320">F(76)=6.2 (5.9, 6.6)</text>
+         id="text320">F(52)=6.2 (5.9, 6.6)</text>
       <line
          x1="63.39"
          y1="241.89"
@@ -2401,7 +2401,7 @@
          y="319.26001"
          text-anchor="end"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6px;font-family:'Roboto Condensed';-inkscape-font-specification:'Roboto Condensed, ';fill:#c0c2da"
-         id="text426">F(76)=90.7 (67.5, 131.6)</text>
+         id="text426">F(52)=90.5 (67.0, 129.6)</text>
       <line
          x1="63.39"
          y1="322.90"
@@ -2970,13 +2970,13 @@
          y="347.67001"
          text-anchor="end"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6px;font-family:'Roboto Condensed';-inkscape-font-specification:'Roboto Condensed, ';fill:#222222"
-         id="text531">ρ=50.9% (48.9, 52.8)</text>
+         id="text531">ρ=50.9% (48.8, 52.7)</text>
       <text
          x="132.82001"
          y="355.26999"
          text-anchor="end"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6px;font-family:'Roboto Condensed';-inkscape-font-specification:'Roboto Condensed, ';fill:#222222"
-         id="text532">F(76)=35.1 (33.6, 36.7)</text>
+         id="text532">F(52)=35.2 (33.7, 36.8)</text>
       <line
          x1="63.39"
          y1="403.91"
@@ -3545,13 +3545,13 @@
          y="23.620001"
          text-anchor="end"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6px;font-family:'Roboto Condensed';-inkscape-font-specification:'Roboto Condensed, ';fill:#d8262f"
-         id="text637">ρ=59.4% (58.0, 60.9)</text>
+         id="text637">ρ=59.4% (58.0, 60.8)</text>
       <text
          x="241.97"
          y="31.219999"
          text-anchor="end"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6px;font-family:'Roboto Condensed';-inkscape-font-specification:'Roboto Condensed, ';fill:#d8262f"
-         id="text638">F(76)=4.5 (4.4, 4.6)</text>
+         id="text638">F(52)=4.5 (4.4, 4.6)</text>
       <line
          x1="172.53"
          y1="79.86"
@@ -4120,13 +4120,13 @@
          y="104.63"
          text-anchor="end"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6px;font-family:'Roboto Condensed';-inkscape-font-specification:'Roboto Condensed, ';fill:#c94eac"
-         id="text743">ρ=80.3% (79.1, 81.4)</text>
+         id="text743">ρ=80.4% (79.2, 81.5)</text>
       <text
          x="241.97"
          y="112.23"
          text-anchor="end"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6px;font-family:'Roboto Condensed';-inkscape-font-specification:'Roboto Condensed, ';fill:#c94eac"
-         id="text744">F(76)=5.8 (5.6, 6.0)</text>
+         id="text744">F(52)=5.8 (5.6, 6.0)</text>
       <line
          x1="172.53"
          y1="160.88"
@@ -4695,13 +4695,13 @@
          y="185.64999"
          text-anchor="end"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6px;font-family:'Roboto Condensed';-inkscape-font-specification:'Roboto Condensed, ';fill:#3491c4"
-         id="text849">ρ=15.3% (14.1, 16.5)</text>
+         id="text849">ρ=15.2% (14.0, 16.4)</text>
       <text
          x="241.97"
          y="193.25"
          text-anchor="end"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6px;font-family:'Roboto Condensed';-inkscape-font-specification:'Roboto Condensed, ';fill:#3491c4"
-         id="text850">F(76)=32.3 (29.9, 34.9)</text>
+         id="text850">F(52)=32.4 (30.0, 35.1)</text>
       <line
          x1="172.53"
          y1="241.89"
@@ -5276,7 +5276,7 @@
          y="319.26001"
          text-anchor="end"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6px;font-family:'Roboto Condensed';-inkscape-font-specification:'Roboto Condensed, ';fill:#3a3a3e"
-         id="text956">F(76)=105.2 (99.6, 110.8)</text>
+         id="text956">F(52)=105.2 (99.6, 110.8)</text>
       <line
          x1="172.53"
          y1="322.90"
@@ -5845,13 +5845,13 @@
          y="68.620003"
          text-anchor="end"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6px;font-family:'Roboto Condensed';-inkscape-font-specification:'Roboto Condensed, ';fill:#f47c0c"
-         id="text1061">ρ=51.0% (49.7, 52.4)</text>
+         id="text1061">ρ=51.0% (49.6, 52.3)</text>
       <text
          x="351.10999"
          y="76.220001"
          text-anchor="end"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6px;font-family:'Roboto Condensed';-inkscape-font-specification:'Roboto Condensed, ';fill:#f47c0c"
-         id="text1062">F(76)=145.4 (139.1, 152.0)</text>
+         id="text1062">F(52)=145.4 (139.0, 152.4)</text>
       <line
          x1="281.68"
          y1="79.86"
@@ -6426,7 +6426,7 @@
          y="112.23"
          text-anchor="end"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6px;font-family:'Roboto Condensed';-inkscape-font-specification:'Roboto Condensed, ';fill:#06713b"
-         id="text1168">F(76)=14.4 (13.9, 14.9)</text>
+         id="text1168">F(52)=14.5 (13.9, 15.0)</text>
       <line
          x1="281.68"
          y1="160.88"
@@ -6995,13 +6995,13 @@
          y="185.64999"
          text-anchor="end"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6px;font-family:'Roboto Condensed';-inkscape-font-specification:'Roboto Condensed, ';fill:#2b1555"
-         id="text1273">ρ=6.4% (6.1, 6.8)</text>
+         id="text1273">ρ=6.4% (6.0, 6.7)</text>
       <text
          x="351.10999"
          y="193.25"
          text-anchor="end"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6px;font-family:'Roboto Condensed';-inkscape-font-specification:'Roboto Condensed, ';fill:#2b1555"
-         id="text1274">F(76)=29.4 (27.8, 31.0)</text>
+         id="text1274">F(52)=29.5 (28.1, 31.1)</text>
       <line
          x1="281.68"
          y1="241.89"
@@ -7570,13 +7570,13 @@
          y="266.66"
          text-anchor="end"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6px;font-family:'Roboto Condensed';-inkscape-font-specification:'Roboto Condensed, ';fill:#5a5a5a"
-         id="text1379">ρ=63.6% (60.0, 67.3)</text>
+         id="text1379">ρ=63.5% (59.9, 67.2)</text>
       <text
          x="351.10999"
          y="274.26001"
          text-anchor="end"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6px;font-family:'Roboto Condensed';-inkscape-font-specification:'Roboto Condensed, ';fill:#5a5a5a"
-         id="text1380">F(76)=133.9 (127.7, 140.6)</text>
+         id="text1380">F(52)=134.1 (127.8, 140.8)</text>
       <line
          x1="281.68"
          y1="322.90"
