@@ -455,15 +455,30 @@ SquareMatrixInverse <- function (X, inverse = 'cholesky', exclude_from_inverse =
 # at 24 and right censoring at 77. Derive various predictions.
 # Sample parameters from multivariate normal distribution
 # derived from hessian in order to calculate CIs.
+#
+# fit_allcause is a crutch to allow for competing risks inference.
+# if filt refers to the feto-infant life table for a single cause of death,
+# then providing filt_total allows for correct calculation of cumulative
+# incidence of this single cause of death because the total survival is correctly
+# used in the calculation as opposed to the single cause survival if filt_total is not
+# provided.
 FitFetoinfantSurvival <-
   function (
-    filt, control = ControlFitFetoinfantSurvival()
+    filt, control = ControlFitFetoinfantSurvival(), fit_allcause = NULL
   ) {
     
     require(pracma)
     
     stopifnot(any(class(filt) == 'FILT'))
     
+    if (!is.null(fit_allcause)) {
+      stopifnot(unique(filt$stratum) == unique(fit_allcause$stratum))
+      fit_allcause_par <-
+        fit_allcause %>%
+        select(stratum, par_draws_allcause = par_draws)
+      filt <- left_join(filt, fit_allcause_par)
+    }
+
     fit_lifetable <-
       filt %>%
       left_join(FILTMortalityRates(.)) %>%
@@ -580,7 +595,7 @@ FitFetoinfantSurvival <-
         
         ### posterior simulation ###
         
-        # 1000 draws from the posterior parameter distribution
+        # nsim draws from the posterior parameter distribution
         # assuming multivariate normal derived from hessian
         par_draw <-
           expand_grid(
@@ -647,80 +662,172 @@ FitFetoinfantSurvival <-
           cnst$left_truncation_gestage
         
         # predictions by posterior draw
-        pred_draw <-
-          par_draw %>%
-          group_by(draw) %>%
-          group_modify(~{
-            pars <- RescaleParameters(
-              .x$value, control$model, control$split,
-              zeta_range = control$zeta_range,
-              beta1_range = control$beta1_range,
-              beta2_range = control$beta2_range
-            )
-            tibble(
-              # weeks since left truncation age
-              x =
-                seq(0, omega, length.out = 1000),
-              # width of age interval
-              n = omega/1000,
-              # probability of fetoinfant survival until x
-              total_lx =
-                FetoinfantSurv(
-                  x,
-                  pars = pars,
-                  component = 'total',
-                  model = control$model
-                ),
-              # probability of fetoinfant death until x
-              total_Fx =
-                1-total_lx,
-              # probability of fetoinfant death until x
-              # (one in x won't survive)
-              total_iFx =
-                1/total_Fx,
-              # hazard of fetoinfant death at x
-              total_hx =
-                FetoinfantHzrd(
-                  x,
-                  pars = pars,
-                  component = 'total',
-                  model = control$model
-                ),
-              # hazard of birth component at x
-              birth_hx =
-                FetoinfantHzrd(
-                  x,
-                  pars = pars,
-                  component = 'birth',
-                  model = control$model
-                ),
-              # hazard of ontogenescent component at x
-              ontogen_hx =
-                FetoinfantHzrd(
-                  x,
-                  pars = pars,
-                  component = 'ontogen',
-                  model = control$model
-                ),
-              # cumulative probability of death due
-              # to birth component
-              birth_Fx =
-                cumsum(total_lx*birth_hx*n),
-              # cumulative probability of death due
-              # to ontogenescent component
-              ontogen_Fx =
-                cumsum(total_lx*ontogen_hx*n),
-              # share of deaths due to birth component
-              p_birth =
-                birth_Fx/total_Fx
-            ) %>%
-              mutate(
-                # transform back to gestational age
-                x = x + cnst$left_truncation_gestage
+        if (is.null(fit_allcause)) {
+          pred_draw <-
+            par_draw %>%
+            group_by(draw) %>%
+            group_modify(~{
+              pars <- RescaleParameters(
+                .x$value, control$model, control$split,
+                zeta_range = control$zeta_range,
+                beta1_range = control$beta1_range,
+                beta2_range = control$beta2_range
               )
-          }) %>%
-          ungroup()
-        
+              tibble(
+                # weeks since left truncation age
+                x =
+                  seq(0, omega, length.out = 1000),
+                # width of age interval
+                n = omega/1000,
+                # probability of fetoinfant survival until x
+                total_lx =
+                  FetoinfantSurv(
+                    x,
+                    pars = pars,
+                    component = 'total',
+                    model = control$model
+                  ),
+                # probability of fetoinfant death until x
+                total_Fx =
+                  1-total_lx,
+                # probability of fetoinfant death until x
+                # (one in x won't survive)
+                total_iFx =
+                  1/total_Fx,
+                # hazard of fetoinfant death at x
+                total_hx =
+                  FetoinfantHzrd(
+                    x,
+                    pars = pars,
+                    component = 'total',
+                    model = control$model
+                  ),
+                # hazard of birth component at x
+                birth_hx =
+                  FetoinfantHzrd(
+                    x,
+                    pars = pars,
+                    component = 'birth',
+                    model = control$model
+                  ),
+                # hazard of ontogenescent component at x
+                ontogen_hx =
+                  FetoinfantHzrd(
+                    x,
+                    pars = pars,
+                    component = 'ontogen',
+                    model = control$model
+                  ),
+                # cumulative probability of death due
+                # to birth component
+                birth_Fx =
+                  cumsum(total_lx*birth_hx*n),
+                # cumulative probability of death due
+                # to ontogenescent component
+                ontogen_Fx =
+                  cumsum(total_lx*ontogen_hx*n),
+                # share of deaths due to birth component
+                p_birth =
+                  birth_Fx/total_Fx
+              ) %>%
+                mutate(
+                  # transform back to gestational age
+                  x = x + cnst$left_truncation_gestage
+                )
+            }) %>%
+            ungroup()
+        }
+        # different calculation involving Sx when outcome is cause specific deaths
+        if (!is.null(fit_allcause)) {
+          par_draw_total <- unnest_legacy(fit_allcause_par,
+                                          par_draws_allcause) %>%
+                            rename(value_total = value)
+          control_allcause <- fit_allcause$control[[1]]
+          pred_draw <-
+            full_join(par_draw, par_draw_total) %>%
+            select(-stratum) %>%
+            arrange(draw) %>%
+            group_by(draw) %>%
+            group_modify(~{
+              pars <- RescaleParameters(
+                na.omit(.x$value), control$model, control$split,
+                zeta_range = control$zeta_range,
+                beta1_range = control$beta1_range,
+                beta2_range = control$beta2_range
+              )
+              pars_allcause <- RescaleParameters(
+                na.omit(.x$value),
+                control_allcause$model,
+                control_allcause$split,
+                zeta_range = control_allcause$zeta_range,
+                beta1_range = control_allcause$beta1_range,
+                beta2_range = control_allcause$beta2_range
+              )
+              tibble(
+                # weeks since left truncation age
+                x =
+                  seq(0, omega, length.out = 1000),
+                # width of age interval
+                n = omega/1000,
+                # probability of fetoinfant survival until x
+                # from allcause model
+                total_lx =
+                  FetoinfantSurv(
+                    x,
+                    pars = pars_allcause,
+                    component = 'total',
+                    model = control_allcause$model
+                  ),
+                # hazard of fetoinfant death from specific cause at x
+                total_hx =
+                  FetoinfantHzrd(
+                    x,
+                    pars = pars,
+                    component = 'total',
+                    model = control$model
+                  ),
+                # hazard of birth component from specific cause at x
+                birth_hx =
+                  FetoinfantHzrd(
+                    x,
+                    pars = pars,
+                    component = 'birth',
+                    model = control$model
+                  ),
+                # hazard of ontogenescent component from specific cause at x
+                ontogen_hx =
+                  FetoinfantHzrd(
+                    x,
+                    pars = pars,
+                    component = 'ontogen',
+                    model = control$model
+                  ),
+                # probability of fetoinfant death from specific cause until x
+                total_Fx =
+                  cumsum(total_lx*total_hx*n),
+                # probability of fetoinfant death from specific cause until x
+                # (one in x won't survive)
+                total_iFx =
+                  1/total_Fx,
+                # cumulative probability of death from specific cause due
+                # to birth component
+                birth_Fx =
+                  cumsum(total_lx*birth_hx*n),
+                # cumulative probability of death from specific cause due
+                # to ontogenescent component
+                ontogen_Fx =
+                  cumsum(total_lx*ontogen_hx*n),
+                # share of deaths due to birth component
+                p_birth =
+                  birth_Fx/total_Fx
+              ) %>%
+                mutate(
+                  # transform back to gestational age
+                  x = x + cnst$left_truncation_gestage
+                )
+            }) %>%
+            ungroup()
+        }
         # summarize predictions over draws
         pred <-
           pred_draw %>%
