@@ -34,9 +34,11 @@ OUT_OUTPUTS := \
 	$(OUT_DIR)/52-codpara.tex \
 	$(OUT_DIR)/53-competing_risks_statistics.qs \
 	$(OUT_DIR)/53-bhump_by_cod.csv \
-  $(OUT_DIR)/53-rho_by_stratum.csv \
-  $(OUT_DIR)/53-Fx_by_stratum.csv \
+	$(OUT_DIR)/53-rho_by_stratum.csv \
+	$(OUT_DIR)/53-Fx_by_stratum.csv \
 	$(OUT_DIR)/54-parametric_decompositions.qs \
+	$(OUT_DIR)/54-parametric_decompositions.csv \
+	$(OUT_DIR)/54-parametric_decompositions.tex \
 	$(OUT_DIR)/55-backwards_extrapolation.svg \
 	$(OUT_DIR)/56-hzrd-origineducation.svg \
 	$(OUT_DIR)/56-compression.svg \
@@ -158,7 +160,9 @@ $(OUT_DIR)/53-bhump_by_cod.csv &: \
 	$(CFG_DIR)/config.yaml | $(OUT_DIR)
 	$(R) $<
 
-$(OUT_DIR)/54-parametric_decompositions.qs: \
+$(OUT_DIR)/54-parametric_decompositions.qs \
+$(OUT_DIR)/54-parametric_decompositions.csv \
+$(OUT_DIR)/54-parametric_decompositions.tex &: \
 	$(SRC_DIR)/54-parametric_decomposition.R \
 	$(TMP_DIR)/50-competing_risks_model_fits.qs \
 	$(SRC_DIR)/00-fnct-parametric_survival_model.R \
