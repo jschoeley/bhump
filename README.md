@@ -1,6 +1,6 @@
 # The birth-hump – a shape decomposition of perinatal excess mortality
 
-[Jonas Schöley](https://orcid.org/0000-0002-3340-8518) & [Maxi S. Kniffka](https://orcid.org/0000-0001-6603-2724)
+Jonas Schöley [![ORCID](https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png)](https://orcid.org/0000-0002-3340-8518) & Maxi S. Kniffka [![ORCID](https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png)](https://orcid.org/0000-0001-6603-2724)
 
 ![](./ass/cover.png)
 
@@ -28,6 +28,14 @@ Raw NCHS files are not tracked by git. They are downloaded into:
 
 - `dat/10-nchs-us_cohort_linked_infant_deaths_births/`
 - `dat/10-nchs-us_fetal_deaths/`
+
+## Computing environment
+
+The analysis is run from the command line with GNU Make. It requires a recent R installation plus the packages listed in `src/_install_dependencies.R`. Install or refresh the R dependencies with:
+
+```sh
+Rscript --vanilla src/_install_dependencies.R
+```
 
 ## Reproduce the analysis
 
@@ -66,4 +74,3 @@ Main generated artifacts are written to `out/`:
 - `out/40-*`, `out/55-*`, `out/56-*`, and `out/60-*` through `out/63-*`: generated SVG figures and figure data objects.
 
 Publication-ready PDF, PNG, and SVG figure exports are stored in `fig/`.
-
